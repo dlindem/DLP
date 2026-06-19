@@ -1,0 +1,29 @@
+<?xml-model href="https://exist.dacl.zbr.pt/exist/rest/db/schemas/academia.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:dacl="http://dacl.zbr.pt/annotations" xml:id="DLP-cavalo_2-343b2" xml:lang="pt" n="2">
+            <dacl:meta status="imported"/>
+            <form>
+                <orth>cavalo</orth>
+        <pron>kɐˈvalu</pron>
+<syll>ca.va.lo</syll>
+                
+            </form>
+            <gramGrp>n. m.</gramGrp>
+            <sense xml:id="DLP-cavalo_2-343b2-2">
+                <re>
+                    <form>
+                        <orth>Cavalo Alado</orth>
+                    </form>
+                    <sense xml:id="DLP-cavalo_2-343b2-1">
+                        <usg type="domain">Astron.</usg>
+                        <def>o mesmo que <ref type="entry">Pégaso</ref>
+                        </def>
+                        <note type="case">com inicial maiúscula</note>
+                    </sense>
+                </re>
+            </sense>
+            <etym>Do latim <cit type="etymon">
+                    <form>
+                        <orth xml:lang="la">caballus</orth>
+                    </form>
+                </cit> ‘cavalo de trabalho’, relativo a Pégaso, figura mitológica</etym>
+        </entry>

@@ -1,0 +1,490 @@
+<?xml-model href="https://exist.dacl.zbr.pt/exist/rest/db/schemas/academia.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<root>
+<entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:dacl="http://dacl.zbr.pt/annotations" xml:id="DLP-cavalo_1-c9654" xml:lang="pt" n="1">
+  <dacl:meta status="edited"/>
+  <form>
+    <orth>cavalo</orth>
+        <pron>kɐˈvalu</pron>
+    <syll>ca.va.lo</syll>
+  </form>
+  <gramGrp>n. m.</gramGrp>
+  <sense n="1" xml:id="DLP-cavalo_1-c9654-23" ana="#level_very_easy">
+    <figure>
+      <graphic url="cavalo.jpg"/>
+      <head>cavalo</head>
+    </figure>
+    <usg type="domain">Zool.</usg>
+    <def>animal mamífero ruminante perissodáctilo, da família dos equídeos, selvagem ou
+            domesticado, utilizado como montada, animal de tração ou de carga, do qual existem
+            várias raças</def>
+    <note type="scientific">Equus caballus</note>
+    <cit type="example">
+      <quote type="combinacao_frequente">corrida de cavalos; dorso do cavalo; flanco do cavalo; garupa do cavalo</quote>
+    </cit>
+    <cit type="example">
+      <quote type="combinacao_frequente">montar a cavalo</quote>
+    </cit>
+    <re>
+      <form>
+        <orth>cavalo branco</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-1">
+        <usg type="socioCultural">Gír.</usg>
+        <usg type="domain">Teat.</usg>
+        <def>diz-se da pessoa exterior ao meio teatral que subsidia uma companhia ou
+                    espetáculo por amizade a um empresário ou por favorecimento a um ator ou
+                    atriz</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo da sela</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-2" n="1">
+        <def>o que, nas carruagens de boleia ou seges, era montada pelo boleeiro</def>
+      </sense>
+      <sense xml:id="DLP-cavalo_1-c9654-3" n="2">
+        <def>o que puxa o carro, do lado esquerdo do cocheiro</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de batalha</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-4">
+        <usg type="frequency">Desus.</usg>
+        <def>o que é adestrado para ser utilizado em combate</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de campo</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-5">
+        <usg type="geographic">Bras. (N.).</usg>
+        <def>o que é adestrado, para ser utilizado pelo vaqueiro para campear o gado</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de cem moedas</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-6">
+        <def>diz-se de qualquer coisa muito vistosa</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de lançamento</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-7">
+        <def>o que é utilizado para reprodução</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de meia jorna</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-8">
+        <def>o que já está velho</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de muda</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-9">
+        <def>designação do equídeo que, antigamente, em locais assinalados, se destinava a
+                    substituir outros, que chegassem cansados</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de pau</orth>
+      </form>
+      <sense n="1" xml:id="DLP-cavalo_1-c9654-10">
+        <def>brinquedo em madeira formado por uma haste encimada por uma cabeça de
+                    cavalo</def>
+      </sense>
+      <sense xml:id="DLP-cavalo_1-c9654-11" n="2">
+        <def>brinquedo com a forma de um cavalo, com rodas ou de baloiço</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de pobre</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-12">
+        <usg type="socioCultural">Pop.</usg>
+        <def>burro ou asno</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de sela</orth>
+      </form>
+      <sense n="1" xml:id="DLP-cavalo_1-c9654-13">
+        <usg type="geographic">Bras.</usg>
+        <def>o que é apenas utilizado como transporte</def>
+      </sense>
+      <sense xml:id="DLP-cavalo_1-c9654-14" n="2">
+        <usg type="domain">Zootec.</usg>
+        <def>o que é elegante e musculado, de linhas finas e secas, destinado aos desportos
+                    equestres</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de tiro</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-15">
+        <def>o que é utilizado para tração</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo de Tróia</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-16">
+        <usg type="domain">Mitol.</usg>
+        <def>enorme cavalo oco, em madeira, deixado diante de Tróia pelos gregos, que
+                    fingiram levantar o cerco, e que, tendo sido levado pelos troianos para dentro
+                    das muralhas, permitiu aos guerreiros escondidos no seu interior abrir as portas
+                    da cidade ao exército grego que, assim, a conquistou</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo desobrigado</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-17">
+        <def>o que anda bem, sem precisar de espora</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo lobeiro</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-18">
+        <def>aquele cujo pelo é amarelo na base e preto na ponta</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo mocho</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-19">
+        <usg type="geographic">Bras.</usg>
+        <def>o que não tem orelhas ou parte delas</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalos de reforço</orth>
+      </form>
+      <sense n="1" xml:id="DLP-cavalo_1-c9654-20">
+        <def>aqueles que ajudam outros na tração em subida íngreme</def>
+      </sense>
+      <sense xml:id="DLP-cavalo_1-c9654-21" n="2">
+        <usg type="socioCultural">Deprec.</usg>
+        <def>pessoas que vêm em auxílio</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>cavalo zambro</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-22">
+        <usg type="domain">Equit.</usg>
+        <def>aquele que tem qualquer dos membros posteriores desviado da linha de aprumo,
+                    pela torção para fora</def>
+      </sense>
+    </re>
+    <re>
+      <form>
+        <orth>sopas de cavalo cansado</orth>
+      </form>
+    </re>
+  </sense>
+  <sense n="2" xml:id="DLP-cavalo_1-c9654-24">
+    <def>unidade de um corpo de cavalaria; soldado de cavalaria</def>
+  </sense>
+  <sense xml:id="DLP-cavalo_1-c9654-26" n="3">
+    <def>defesa formada por traves de madeira ou de metal</def>
+    <re>
+      <form>
+        <orth>cavalo de frisa</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-25">
+        <def>defesa deste género usada, pela primeira vez, na Frísia, pelos espanhóis</def>
+      </sense>
+    </re>
+  </sense>
+  <sense n="4" xml:id="DLP-cavalo_1-c9654-27">
+    <def>peça do jogo de xadrez, com o formato de uma cabeça de equídeo</def>
+  </sense>
+  <sense n="5" xml:id="DLP-cavalo_1-c9654-28">
+    <def>em alguns baralhos de cartas, figura que representa um cavaleiro e a sua montada</def>
+    <xr type="synonymy">
+      <ref type="entry">valete</ref>
+    </xr>
+  </sense>
+  <sense xml:id="DLP-cavalo_1-c9654-30" n="6">
+    <usg type="domain">Desp.</usg>
+    <def>aparelho de ginástica constituído por uma peça oblonga forrada a couro e sustentada por
+            quatro pernas, por sobre o qual se executam exercícios de salto</def>
+    <re>
+      <form>
+        <orth>cavalo de arções</orth>
+      </form>
+      <sense xml:id="DLP-cavalo_1-c9654-29">
+        <def>aparelho, equipado com duas pegas, utilizado em ginástica desportiva masculina,
+                    sobre o qual o atleta executa movimentos de baloiço, rotação e equilíbrio</def>
+      </sense>
+    </re>
+  </sense>
+  <sense n="7" xml:id="DLP-cavalo_1-c9654-31">
+    <def>o mesmo que <ref type="entry">cavalo-vapor</ref>
+                </def>
+    <cit type="example">
+      <quote type="example">A versão diesel tem menos 15 cavalos que a versão a
+                gasolina.</quote>
+    </cit>
+  </sense>
+  <sense xml:id="DLP-cavalo_1-c9654-32" n="8">
+    <def>banco de tanoaria</def>
+  </sense>
+  <sense n="9" xml:id="DLP-cavalo_1-c9654-33">
+    <def>ramo ou tronco em que se enxerta uma planta</def>
+  </sense>
+  <sense n="10" xml:id="DLP-cavalo_1-c9654-34">
+    <def>tenaz de fogão</def>
+  </sense>
+  <sense xml:id="DLP-cavalo_1-c9654-35" n="11">
+    <usg type="domain">Zool.</usg>
+    <def>peixe de mar da família dos zeídeos</def>
+    <note type="scientific">Argyriosus vomer</note>
+    <xr type="synonymy">
+      <ref type="entry">alfaquim</ref>
+    </xr>
+    <xr type="synonymy">
+      <ref type="entry">galo</ref>
+    </xr>
+  </sense>
+  <sense xml:id="DLP-cavalo_1-c9654-36" n="12">
+    <usg type="socioCultural">Pop.</usg>
+    <def>cancro venéreo</def>
+  </sense>
+  <sense n="13" xml:id="DLP-cavalo_1-c9654-37">
+    <usg type="domain">Tip.</usg>
+    <def>letra ou fragmento de letra que, na parte inferior de outra, a obriga a ficar mais
+            alta</def>
+  </sense>
+  <sense xml:id="DLP-cavalo_1-c9654-38" n="14">
+    <usg type="socioCultural">Pop.</usg>
+    <def>pessoa que denota pouca inteligência; pessoa grosseira, bruta</def>
+    <xr type="synonymy">
+      <usg type="socioCultural">Pop.</usg>
+      <ref type="entry">
+                         besta</ref>
+    </xr>
+    <xr type="synonymy">
+      <usg type="socioCultural">Pop.</usg>
+      <ref type="entry">
+                        cavalgadura</ref>
+    </xr>
+  </sense>
+  <sense xml:id="DLP-cavalo_1-c9654-39" n="15">
+    <usg type="socioCultural">Gír.</usg>
+    <def>heroína</def>
+    <cit type="example">
+      <quote type="combinacao_frequente">chutar cavalo; fumar cavalo</quote>
+    </cit>
+  </sense>
+  <sense n="16" xml:id="DLP-cavalo_1-c9654-40">
+    <usg type="geographic">Region. (Beira B.).</usg>
+    <def>cada um dos molhos de cereal que, na eira, vão ser malhados</def>
+  </sense>
+  <sense xml:id="DLP-cavalo_1-c9654-41" n="17">
+    <usg type="geographic">Bras.</usg>
+    <def>um dos grupos do jogo do bicho</def>
+  </sense>
+  <re>
+    <xr>
+                    <ref type="entry">dose</ref> de cavalo</xr>
+  </re>
+  <re>
+    <form>
+      <orth>a cavalo</orth>
+    </form>
+    <gramGrp>loc. adv.</gramGrp>
+    <sense xml:id="DLP-cavalo_1-c9654-43" ana="#level_very_easy">
+      <usg type="socioCultural">Pop.</usg>
+      <def>sentado, sobre alguma coisa, com uma perna de um lado e a outra do outro, à
+                    semelhança de quem monta a cavalo</def>
+      <cit type="example">
+        <quote type="example">Chegou a cavalo num burro.</quote>
+      </cit>
+      <cit type="example">
+        <quote type="example">Brincava a cavalo no irmão.</quote>
+      </cit>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>a cavalo no vento</orth>
+    </form>
+    <gramGrp>loc. adv.</gramGrp>
+    <sense xml:id="DLP-cavalo_1-c9654-44">
+      <usg type="domain">Náut.</usg>
+      <def>o mais chegado possível ao vento</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>a cavalo dado não se olha ao dente</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-45">
+      <def>não reclamar de uma situação proporcionada ou não colocar defeito a uma coisa
+                    oferecida</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>abrir o cavalo</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-46">
+      <usg type="geographic">Bras.</usg>
+      <def>mandar alguém retirar o que disse</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>andar em cavalos gordos</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-47">
+      <def>estar folgado</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>andar no cavalo dos frades</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-48">
+      <def>andar a pé</def>
+    </sense>
+  </re>
+  <re>
+    <xr>
+                    <ref type="entry">bife</ref> a cavalo</xr>
+  </re>
+  <re>
+    <xr>
+                    <ref type="entry">bife</ref> com ovo a cavalo</xr>
+  </re>
+  <re>
+    <form>
+      <orth>cair do cavalo</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-49">
+      <def>ter uma grande surpresa, ter uma desilusão</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>dar um cavalo na batalha</orth>
+    </form>
+    <sense n="1" xml:id="DLP-cavalo_1-c9654-50">
+      <def>ceder, em batalha, o cavalo a outro cavaleiro, que terá perdido o seu</def>
+    </sense>
+    <sense xml:id="DLP-cavalo_1-c9654-51" n="2">
+      <def>prestar auxílio ou socorro numa situação difícil, complicada</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>ficar de cavalo</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-52">
+      <def>ficar bem colocado, numa posição segura</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>fugir a unhas de cavalo</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-53">
+      <def>fugir apressadamente</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>ir a mata cavalo(s)</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-54">
+      <def>ir muito depressa</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>ir/passar de cavalo para burro</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-55">
+      <def>piorar de condição social ou financeira</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>não cair de cavalo magro</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-56">
+      <def>não se deixar ludibriar</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>passar em cavalos brancos por<hi>alguma coisa</hi>
+                    </orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-57">
+      <def>superar(-se) em determinada área</def>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>tirar o cavalo/cavalinho da chuva</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-58">
+      <def>desistir de um intento</def>
+      <cit type="example">
+        <quote>Sim, mas enquanto há vento molha-se a vela. Quem tiver rasca na assadura,
+                        o melhor é ir tirando o cavalo da chuva!</quote>
+        <bibl>
+          <author>J. R. Miguéis</author>
+          <title>O Pão</title>
+          <citedRange>246</citedRange>
+        </bibl>
+      </cit>
+    </sense>
+  </re>
+  <re>
+    <form>
+      <orth>a unhas de cavalo</orth>
+    </form>
+    <sense xml:id="DLP-cavalo_1-c9654-60">
+      <usg type="geographic">Region.</usg>
+      <def>muito depressa</def>
+      <xr type="synonymy">
+        <ref type="entry">à rédea solta</ref>
+      </xr>
+    </sense>
+  </re>
+  <etym>Do latim <cit type="etymon">
+                    <form>
+                        <orth xml:lang="la">caballus</orth>
+                    </form>
+                </cit> ‘cavalo
+        de trabalho’</etym>
+  <note type="use">Aumentativo: cavalão. Diminutivo: cavalinho, -ito</note>
+</entry>
+</root>

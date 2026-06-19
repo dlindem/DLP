@@ -1,0 +1,32 @@
+<?xml-model href="https://exist.dacl.zbr.pt/exist/rest/db/schemas/academia.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:dacl="http://dacl.zbr.pt/annotations" xml:lang="pt" xml:id="DLP--anca_1-abe98">
+    <dacl:meta status="imported"/>
+    <form>
+        <orth>-ança</orth>
+    </form>
+
+    <gramGrp>elem. de form.</gramGrp>
+    <gloss>exprime a noção de: <sense n="1" xml:id="DLP--anca_1-abe98-1">
+            <def>estado de alma (<emph>lembrança; esperança; confiança</emph>)</def>
+        </sense>
+        <sense n="2" xml:id="DLP--anca_1-abe98-2">
+            <def>qualidade (<emph>semelhança; segurança</emph>)</def>
+        </sense>
+        <sense n="3" xml:id="DLP--anca_1-abe98-3">
+            <def>ação ou o seu resultado (<emph>mudança; poupança</emph>)</def>
+        </sense>
+        <sense n="4" xml:id="DLP--anca_1-abe98-4">
+            <def>aumentativo (<emph>festança; abastança</emph>)</def>
+        </sense>
+        <sense xml:id="DLP--anca_1-abe98-5" n="5">
+            <def>coletivo (<emph>vizinhança</emph>)</def>
+        </sense>
+    </gloss>
+    <etym>Do latim <cit type="etymon">
+            <form>
+                <orth xml:lang="la">-antia</orth>
+            </form>
+        </cit>
+    </etym>
+
+</entry>

@@ -1,0 +1,25 @@
+<?xml-model href="https://exist.dacl.zbr.pt/exist/rest/db/schemas/academia.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:dacl="http://dacl.zbr.pt/annotations" xml:lang="pt" xml:id="DLP--anco_1-30932">
+            <dacl:meta status="imported"/>
+            <form>
+                <orth>-anço</orth>
+            </form>
+            
+                <gramGrp>elem. de form.</gramGrp>
+    <gloss>exprime a noção de: 
+                <sense n="1" xml:id="DLP--anco_1-30932-1">
+                    <def>ação ou seu resultado, muitas vezes com sentido
+depreciativo (<emph>amiganço; espalhanço; gabanço</emph>)</def>
+                </sense>
+                <sense xml:id="DLP--anco_1-30932-2" n="2">
+                    <def>aumentativo (<emph>biconço</emph>)</def>
+                </sense>
+    </gloss>
+                <etym>Do latim <cit type="etymon">
+                    <form>
+                        <orth xml:lang="la">-antius</orth>
+                    </form>
+                </cit>
+                </etym>
+            
+        </entry>

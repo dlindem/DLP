@@ -1,0 +1,20 @@
+<?xml-model href="https://exist.dacl.zbr.pt/exist/rest/db/schemas/academia.rng" type="application/xml" schematypens="http://relaxng.org/ns/structure/1.0"?>
+<entry xmlns="http://www.tei-c.org/ns/1.0" xmlns:dacl="http://dacl.zbr.pt/annotations" xml:id="DLP--ancia_1-e5c72" xml:lang="pt">
+    <dacl:meta status="imported"/>
+    <form>
+        <orth>-ância</orth>
+    </form>
+
+    <gramGrp>elem. de form.</gramGrp>
+    <sense xml:id="DLP--ancia_1-e5c72-1">
+        <gloss>exprime a noção de ação ou seu resultado (<emph>observância;
+            tolerância</emph>)</gloss>
+    </sense>
+    <etym>Do latim <cit type="etymon">
+            <form>
+                <orth xml:lang="la">-antia</orth>
+            </form>
+        </cit>
+    </etym>
+
+</entry>
