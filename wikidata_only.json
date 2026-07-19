@@ -1,0 +1,887 @@
+[
+  {
+    "lemma": "-inho",
+    "pos": "Q102047",
+    "wikidata_id": "http://www.wikidata.org/entity/L995082"
+  },
+  {
+    "lemma": "para",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L618867"
+  },
+  {
+    "lemma": "sobre",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L502636"
+  },
+  {
+    "lemma": "como",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L502867"
+  },
+  {
+    "lemma": "como",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L502868"
+  },
+  {
+    "lemma": "em",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L477314"
+  },
+  {
+    "lemma": "com",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L477316"
+  },
+  {
+    "lemma": "a",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L490717"
+  },
+  {
+    "lemma": "a",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47015"
+  },
+  {
+    "lemma": "ele",
+    "pos": "Q468801",
+    "wikidata_id": "http://www.wikidata.org/entity/L488745"
+  },
+  {
+    "lemma": "at\u00e9",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L1017458"
+  },
+  {
+    "lemma": "ap\u00f3s",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L501786"
+  },
+  {
+    "lemma": "S\u00e3o Paulo",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L184915"
+  },
+  {
+    "lemma": "Europa",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L671130"
+  },
+  {
+    "lemma": "mas",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L524070"
+  },
+  {
+    "lemma": "ela",
+    "pos": "Q468801",
+    "wikidata_id": "http://www.wikidata.org/entity/L43388"
+  },
+  {
+    "lemma": "ent\u00e3o",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L674370"
+  },
+  {
+    "lemma": "ent\u00e3o",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L674371"
+  },
+  {
+    "lemma": "desde",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L676264"
+  },
+  {
+    "lemma": "oxente",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L900666"
+  },
+  {
+    "lemma": "-ista",
+    "pos": "Q102047",
+    "wikidata_id": "http://www.wikidata.org/entity/L989904"
+  },
+  {
+    "lemma": "quem",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L1490453"
+  },
+  {
+    "lemma": "ou",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L490719"
+  },
+  {
+    "lemma": "lua de mel",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L1119840"
+  },
+  {
+    "lemma": "p\u00e9 de atleta",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L1120478"
+  },
+  {
+    "lemma": "p\u00e9 de chinelo",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L1120481"
+  },
+  {
+    "lemma": "p\u00e9 de moleque",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L1120484"
+  },
+  {
+    "lemma": "do",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L476131"
+  },
+  {
+    "lemma": "voc\u00ea",
+    "pos": "Q468801",
+    "wikidata_id": "http://www.wikidata.org/entity/L500873"
+  },
+  {
+    "lemma": "latino-americano",
+    "pos": "Q357760",
+    "wikidata_id": "http://www.wikidata.org/entity/L1121685"
+  },
+  {
+    "lemma": "latino-americano",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L1121686"
+  },
+  {
+    "lemma": "portugu\u00eas",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L448029"
+  },
+  {
+    "lemma": "merda",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L991458"
+  },
+  {
+    "lemma": "China",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L680182"
+  },
+  {
+    "lemma": "qualquer",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L502640"
+  },
+  {
+    "lemma": "este",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L503957"
+  },
+  {
+    "lemma": "isto",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L503958"
+  },
+  {
+    "lemma": "esse",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L503959"
+  },
+  {
+    "lemma": "isso",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L503960"
+  },
+  {
+    "lemma": "e",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47021"
+  },
+  {
+    "lemma": "e",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L618640"
+  },
+  {
+    "lemma": "J\u00fanior",
+    "pos": "Q1964223",
+    "wikidata_id": "http://www.wikidata.org/entity/L301953"
+  },
+  {
+    "lemma": "Neto",
+    "pos": "Q1964223",
+    "wikidata_id": "http://www.wikidata.org/entity/L409524"
+  },
+  {
+    "lemma": "contra",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L676261"
+  },
+  {
+    "lemma": "enquanto",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L676267"
+  },
+  {
+    "lemma": "qual",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L676568"
+  },
+  {
+    "lemma": "Maria",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L901364"
+  },
+  {
+    "lemma": "ai",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L908661"
+  },
+  {
+    "lemma": "-fobia",
+    "pos": "Q102047",
+    "wikidata_id": "http://www.wikidata.org/entity/L995076"
+  },
+  {
+    "lemma": "Jo\u00e3o",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L1472953"
+  },
+  {
+    "lemma": "ab absurdo",
+    "pos": "Q5978303",
+    "wikidata_id": "http://www.wikidata.org/entity/L1490851"
+  },
+  {
+    "lemma": "Castela",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L1548842"
+  },
+  {
+    "lemma": "sem",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L676265"
+  },
+  {
+    "lemma": "eu",
+    "pos": "Q468801",
+    "wikidata_id": "http://www.wikidata.org/entity/L491661"
+  },
+  {
+    "lemma": "outro",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L669660"
+  },
+  {
+    "lemma": "olho m\u00e1gico",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L1119794"
+  },
+  {
+    "lemma": "p\u00e9 de cabra",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L1120480"
+  },
+  {
+    "lemma": "p\u00e9 de pato",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L1120487"
+  },
+  {
+    "lemma": "c\u00ea",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L1073013"
+  },
+  {
+    "lemma": "mesmo",
+    "pos": "Q34698",
+    "wikidata_id": "http://www.wikidata.org/entity/L646311"
+  },
+  {
+    "lemma": "um",
+    "pos": "Q3813849",
+    "wikidata_id": "http://www.wikidata.org/entity/L46853"
+  },
+  {
+    "lemma": "um",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L44970"
+  },
+  {
+    "lemma": "dois",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46867"
+  },
+  {
+    "lemma": "no",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L477315"
+  },
+  {
+    "lemma": "seu",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L480996"
+  },
+  {
+    "lemma": "todo",
+    "pos": "Q576271",
+    "wikidata_id": "http://www.wikidata.org/entity/L1118974"
+  },
+  {
+    "lemma": "o",
+    "pos": "Q2865743",
+    "wikidata_id": "http://www.wikidata.org/entity/L2782"
+  },
+  {
+    "lemma": "o",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47031"
+  },
+  {
+    "lemma": "ave",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L983896"
+  },
+  {
+    "lemma": "ave",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L983904"
+  },
+  {
+    "lemma": "simulado",
+    "pos": "Q1084",
+    "wikidata_id": "http://www.wikidata.org/entity/L449050"
+  },
+  {
+    "lemma": "quando",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L663725"
+  },
+  {
+    "lemma": "quando",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L663729"
+  },
+  {
+    "lemma": "primeiro",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L670817"
+  },
+  {
+    "lemma": "vossemec\u00ea",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L1141751"
+  },
+  {
+    "lemma": "sino-",
+    "pos": "Q134830",
+    "wikidata_id": "http://www.wikidata.org/entity/L1221607"
+  },
+  {
+    "lemma": "Jap\u00e3o",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L1409203"
+  },
+  {
+    "lemma": "-\u00e7\u00e3o",
+    "pos": "Q102047",
+    "wikidata_id": "http://www.wikidata.org/entity/L19636"
+  },
+  {
+    "lemma": "que",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L647640"
+  },
+  {
+    "lemma": "adeus",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L1417720"
+  },
+  {
+    "lemma": "Guin\u00e9",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L1460131"
+  },
+  {
+    "lemma": "ol\u00e1",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L15889"
+  },
+  {
+    "lemma": "aquele",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L503961"
+  },
+  {
+    "lemma": "aquilo",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L503963"
+  },
+  {
+    "lemma": "pelo",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L501792"
+  },
+  {
+    "lemma": "porque",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L678116"
+  },
+  {
+    "lemma": "bicho de sete cabe\u00e7as",
+    "pos": "Q1401131",
+    "wikidata_id": "http://www.wikidata.org/entity/L700216"
+  },
+  {
+    "lemma": "a\u00e7orenho",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L732990"
+  },
+  {
+    "lemma": "a\u00e7orense",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L732991"
+  },
+  {
+    "lemma": "neozeland\u00eas",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L733006"
+  },
+  {
+    "lemma": "sul-africano",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L733014"
+  },
+  {
+    "lemma": "a\u00e7oriano",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L733485"
+  },
+  {
+    "lemma": "parisiense",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L733490"
+  },
+  {
+    "lemma": "tr\u00eas",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46868"
+  },
+  {
+    "lemma": "quatro",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46869"
+  },
+  {
+    "lemma": "cinco",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46870"
+  },
+  {
+    "lemma": "seis",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46871"
+  },
+  {
+    "lemma": "sete",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46872"
+  },
+  {
+    "lemma": "oito",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46873"
+  },
+  {
+    "lemma": "nove",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46874"
+  },
+  {
+    "lemma": "dez",
+    "pos": "Q63116",
+    "wikidata_id": "http://www.wikidata.org/entity/L46875"
+  },
+  {
+    "lemma": "b",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47017"
+  },
+  {
+    "lemma": "c",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47019"
+  },
+  {
+    "lemma": "d",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47020"
+  },
+  {
+    "lemma": "f",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47022"
+  },
+  {
+    "lemma": "g",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47023"
+  },
+  {
+    "lemma": "h",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47024"
+  },
+  {
+    "lemma": "i",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47025"
+  },
+  {
+    "lemma": "j",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47026"
+  },
+  {
+    "lemma": "k",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47027"
+  },
+  {
+    "lemma": "l",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47028"
+  },
+  {
+    "lemma": "m",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47029"
+  },
+  {
+    "lemma": "n",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47030"
+  },
+  {
+    "lemma": "p",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47032"
+  },
+  {
+    "lemma": "q",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47033"
+  },
+  {
+    "lemma": "r",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47034"
+  },
+  {
+    "lemma": "s",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47035"
+  },
+  {
+    "lemma": "t",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47036"
+  },
+  {
+    "lemma": "u",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47037"
+  },
+  {
+    "lemma": "v",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47038"
+  },
+  {
+    "lemma": "w",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47039"
+  },
+  {
+    "lemma": "x",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47040"
+  },
+  {
+    "lemma": "y",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47041"
+  },
+  {
+    "lemma": "z",
+    "pos": "Q9788",
+    "wikidata_id": "http://www.wikidata.org/entity/L47042"
+  },
+  {
+    "lemma": "nesse",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L523185"
+  },
+  {
+    "lemma": "disto",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L524071"
+  },
+  {
+    "lemma": "disso",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L524072"
+  },
+  {
+    "lemma": "pr\u00e9-",
+    "pos": "Q134830",
+    "wikidata_id": "http://www.wikidata.org/entity/L524646"
+  },
+  {
+    "lemma": "Brasil",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L229779"
+  },
+  {
+    "lemma": "Filho",
+    "pos": "Q1964223",
+    "wikidata_id": "http://www.wikidata.org/entity/L302733"
+  },
+  {
+    "lemma": "muito",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L674368"
+  },
+  {
+    "lemma": "pois",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L676570"
+  },
+  {
+    "lemma": "num",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L677373"
+  },
+  {
+    "lemma": "Camboja",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L749443"
+  },
+  {
+    "lemma": "\u00f3",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L900094"
+  },
+  {
+    "lemma": "\u00f3",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L900242"
+  },
+  {
+    "lemma": "gente",
+    "pos": "Q83034",
+    "wikidata_id": "http://www.wikidata.org/entity/L900340"
+  },
+  {
+    "lemma": "et al.",
+    "pos": "Q3062294",
+    "wikidata_id": "http://www.wikidata.org/entity/L942478"
+  },
+  {
+    "lemma": "-\u00e1vel",
+    "pos": "Q102047",
+    "wikidata_id": "http://www.wikidata.org/entity/L995058"
+  },
+  {
+    "lemma": "amigo da on\u00e7a",
+    "pos": "Q184511",
+    "wikidata_id": "http://www.wikidata.org/entity/L618584"
+  },
+  {
+    "lemma": "cara de pau",
+    "pos": "Q184511",
+    "wikidata_id": "http://www.wikidata.org/entity/L618586"
+  },
+  {
+    "lemma": "boca de siri",
+    "pos": "Q184511",
+    "wikidata_id": "http://www.wikidata.org/entity/L618865"
+  },
+  {
+    "lemma": "bode expiat\u00f3rio",
+    "pos": "Q184511",
+    "wikidata_id": "http://www.wikidata.org/entity/L619087"
+  },
+  {
+    "lemma": "seriado",
+    "pos": "Q1084",
+    "wikidata_id": "http://www.wikidata.org/entity/L447891"
+  },
+  {
+    "lemma": "Lisboa",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L1506136"
+  },
+  {
+    "lemma": "Fran\u00e7a",
+    "pos": "Q147276",
+    "wikidata_id": "http://www.wikidata.org/entity/L1531199"
+  },
+  {
+    "lemma": "cada",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L646316"
+  },
+  {
+    "lemma": "meu",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L480984"
+  },
+  {
+    "lemma": "teu",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L480992"
+  },
+  {
+    "lemma": "-ico",
+    "pos": "Q102047",
+    "wikidata_id": "http://www.wikidata.org/entity/L995106"
+  },
+  {
+    "lemma": "-mente",
+    "pos": "Q102047",
+    "wikidata_id": "http://www.wikidata.org/entity/L490526"
+  },
+  {
+    "lemma": "tu",
+    "pos": "Q468801",
+    "wikidata_id": "http://www.wikidata.org/entity/L491664"
+  },
+  {
+    "lemma": "algum",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L492444"
+  },
+  {
+    "lemma": "onde",
+    "pos": "Q36224",
+    "wikidata_id": "http://www.wikidata.org/entity/L669652"
+  },
+  {
+    "lemma": "onde",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L669650"
+  },
+  {
+    "lemma": "por",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L501796"
+  },
+  {
+    "lemma": "de",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L409099"
+  },
+  {
+    "lemma": "energ\u00e9tico",
+    "pos": "Q1084",
+    "wikidata_id": "http://www.wikidata.org/entity/L448632"
+  },
+  {
+    "lemma": "recebido",
+    "pos": "Q1084",
+    "wikidata_id": "http://www.wikidata.org/entity/L500952"
+  },
+  {
+    "lemma": "dentre",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L501799"
+  },
+  {
+    "lemma": "\u00e0quilo",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L503964"
+  },
+  {
+    "lemma": "\u00e0quele",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L503965"
+  },
+  {
+    "lemma": "neste",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L523183"
+  },
+  {
+    "lemma": "nisto",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L523184"
+  },
+  {
+    "lemma": "nisso",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L523186"
+  },
+  {
+    "lemma": "naquele",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L523187"
+  },
+  {
+    "lemma": "naquilo",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L523188"
+  },
+  {
+    "lemma": "daquilo",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L524073"
+  },
+  {
+    "lemma": "deste",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L524074"
+  },
+  {
+    "lemma": "desse",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L524075"
+  },
+  {
+    "lemma": "daquele",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L524076"
+  },
+  {
+    "lemma": "-il",
+    "pos": "Q102047",
+    "wikidata_id": "http://www.wikidata.org/entity/L229800"
+  },
+  {
+    "lemma": "patrono",
+    "pos": "Q34698",
+    "wikidata_id": "http://www.wikidata.org/entity/L474630"
+  },
+  {
+    "lemma": "dum",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L476218"
+  },
+  {
+    "lemma": "se",
+    "pos": "Q36484",
+    "wikidata_id": "http://www.wikidata.org/entity/L646319"
+  },
+  {
+    "lemma": "ao",
+    "pos": "Q126473",
+    "wikidata_id": "http://www.wikidata.org/entity/L490718"
+  },
+  {
+    "lemma": "durante",
+    "pos": "Q4833830",
+    "wikidata_id": "http://www.wikidata.org/entity/L669655"
+  }
+]
