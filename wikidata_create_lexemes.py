@@ -1,0 +1,185 @@
+import csv, sys, time, re
+from datetime import datetime
+import wdwbi # Wikidata via WikibaseIntegrator
+import mwclient # Wikibase via mwclient
+from config_private import wb_bot_user, wb_bot_pwd
+import requests, json
+from wikibaseintegrator.wbi_enums import ActionIfExists
+
+headers = {"User-Agent": "User:DL2204 python requests"}
+
+site = mwclient.Site("illlp.wikibase.cloud")
+def get_token():
+	global site
+
+	while True:
+		try:
+			login = site.login(username=wb_bot_user, password=wb_bot_pwd)
+			break
+		except Exception as ex:
+			print('Wikibase login via mwclient raised error: '+str(ex))
+			time.sleep(60)
+	# get token
+	csrfquery = site.api('query', meta='tokens')
+	token = csrfquery['query']['tokens']['csrftoken']
+	print(f"Got fresh CSRF token for Wikibase.")
+	return token
+token = get_token()
+
+def write_mapping(wb_entity, wd_entity, type):
+	global token
+	claim_id = None
+	while (not claim_id):
+		try:
+			request = site.post('wbcreateclaim', token=token, entity=wb_entity, property="P1", snaktype="value", value=f'"{wd_entity}"',
+								bot=1, summary=f"Wikidata {type} created from scratch.")
+			if request['success'] == 1:
+				done = True
+				claim_id = request['claim']['id']
+				print(f"Created claim: {wb_entity} - P1 - {wd_entity}...", end=" ")
+			time.sleep(.34)
+		except Exception as ex:
+			if 'Invalid CSRF token.' in str(ex):
+				print('Wait a sec. Must get a new CSRF token...')
+				token = get_token()
+			else:
+				print('Claim creation failed, will try again...\n' + str(ex))
+				time.sleep(4)
+
+
+	guidfix = re.compile(r'^(Q\d+)\-')
+	claim_id = re.sub(guidfix, r'\1$', claim_id)
+
+	nowtime = "+" + datetime.now().isoformat()[:11] + "00:00:00Z"
+
+	refsnaks = json.dumps(
+	{"P17": [{"snaktype": "value", "property": "P17",
+			  "datavalue": {"type": "time", "value": {"time": nowtime, "timezone": 0,
+													  "before": 0,
+													  "after": 0, "precision": 11,
+													  "calendarmodel": "http://www.wikidata.org/entity/Q1985727"}}}]})
+	while True:
+		try:
+			setref = site.post('wbsetreference', token=token, statement=claim_id, index=0, snaks=refsnaks, bot=1)
+			if setref['success'] == 1:
+				print(f'Time reference {nowtime} successfully set.')
+				time.sleep(.34)
+				return True
+		except Exception as ex:
+			print('Reference set failed, will try again...')
+			print(str(ex))
+			time.sleep(5)
+
+# Main #
+
+choice = input("Download Wikibase-wikidata item and property mappings? 'Y' for download, other key for re-using saved mapping.")
+if choice == "Y":
+
+	url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20dct%3A%20%3Chttp%3A%2F%2Fpurl.org%2Fdc%2Fterms%2F%3E%0APREFIX%20wikibase%3A%20%3Chttp%3A%2F%2Fwikiba.se%2Fontology%23%3E%0APREFIX%20skos%3A%20%3Chttp%3A%2F%2Fwww.w3.org%2F2004%2F02%2Fskos%2Fcore%23%3E%0APREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Fentity%20%3FentityLabel%20%3FclassLabel%20%3Fwd%20%20where%0A%0A%7B%20%3Fentity%20ildp%3AP1%20%3Fwd.%0A%20filter%20not%20exists%20%7B%3Fentity%20dct%3Alanguage%20%5B%5D.%7D%20%23%20no%20lexemes%0A%20filter%20not%20exists%20%7B%3Fentity%20skos%3Adefinition%20%5B%5D.%7D%20%23%20no%20senses%0A%20optional%20%7B%3Fentity%20ildp%3AP5%20%3Fclass.%7D%0A%20SERVICE%20wikibase%3Alabel%20%7B%20bd%3AserviceParam%20wikibase%3Alanguage%20%22en%22.%20%7D%0A%7D%20order%20by%20%3Fentity"
+	wb_r = requests.get(headers=headers, url=url)
+	print(wb_r)
+	result = wb_r.json()['results']['bindings']
+	with open('source/wikidata-mappings.json', 'w') as f:
+		json.dump(result, f, indent=2)
+else:
+	with open('source/wikidata-mappings.json') as f:
+		result = json.load(f)
+
+wd_mapping = {}
+for item in result:
+	wd_mapping[item['entity']['value'].replace("https://illlp.wikibase.cloud/entity/", "")] = item['wd']['value']
+
+print("Wikidata mapping loaded.")
+
+# get Wikibase lexemes without aligned Wikidata lexeme (now set to limit 1)
+
+url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Fxml_id%20%3Fsource_date%20%20where%0A%0A%7B%20%3Flexeme%20ildp%3AP3%20ilwb%3AQ5%3B%20dct%3Alanguage%20ilwb%3AQ3%3B%20ilp%3AP6%20%5Bilps%3AP6%20%3Fxml_id%3B%20prov%3AwasDerivedFrom%20%5Bilpr%3AP12%20%3Fsource_date%5D%5D.%0A%20filter%20not%20exists%20%7B%3Flexeme%20ildp%3AP1%20%3Fwd_lexeme.%7D%0A%0A%7D%20limit%201%0A"
+wb_r = requests.get(headers=headers, url=url)
+print(wb_r)
+result = wb_r.json()['results']['bindings']
+wb_lexemes = {}
+for row in result:
+	wb_lexemes[row['lexeme']['value'].replace("https://illlp.wikibase.cloud/entity/", "")] = row
+print(f"Got {len(wb_lexemes)} lexemes without Wikidata alignment.")
+
+count = 0
+for wb_lexeme_id in wb_lexemes:
+	count += 1
+	print(f"\n[{count}/{len(wb_lexemes)}] now processing https://illlp.wikibase.cloud/entity/{wb_lexeme_id}.")
+	wb_lexeme_source_date = wb_lexemes[wb_lexeme_id]['source_date']['value']
+	xml_id = wb_lexemes[wb_lexeme_id]['xml_id']['value']
+	wb_item_r = requests.get(headers=headers,
+							 url=f"https://illlp.wikibase.cloud/wiki/Special:EntityData/{wb_lexeme_id}.json")
+	wb_item = wb_item_r.json()['entities'][wb_lexeme_id]
+	print(f"Got data for https://illlp.wikibase.cloud/wiki/Lexeme:{wb_lexeme_id}, with {len(wb_item['senses'])} senses.")
+	language = wd_mapping[wb_item['language']]
+	lexical_category = wd_mapping[wb_item['lexicalCategory']]
+
+	# build new lexeme
+	wd_lexeme = wdwbi.wbi.lexeme.new(language=language, lexical_category=lexical_category)
+	wd_lexeme.lemmas.set(language="pt", value=wb_item['lemmas']['pt']['value'])
+	wb_lexeme_claims = wb_item['claims']
+	for prop in wb_lexeme_claims:
+		if prop == "P6": # DLP xml-id
+			if wb_lexeme_claims[prop][0]['mainsnak']['datavalue']['value'] != xml_id:
+				print(f"Fatal error: Source list xml_id does not match to lexeme xml_id: {xml_id}")
+				sys.exit()
+			references = wdwbi.References()
+			reference = wdwbi.Reference()
+			reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
+			references.add(reference)
+			wd_lexeme.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=xml_id, references=references))
+		elif prop in wd_mapping:
+			wd_prop = wd_mapping[prop]
+			for claim in wb_lexeme_claims[prop]:
+				if claim['mainsnak']['datatype'] == "wikibase-item":
+					wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
+					references = wdwbi.References()
+					reference = wdwbi.Reference()
+					reference.add(wdwbi.ExternalID(prop_nr="P14752", value=xml_id))
+					reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
+					references.add(reference)
+					wd_lexeme.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references), action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
+
+	# build senses from scratch
+	for sense in wb_item['senses']:
+		gloss = sense['glosses']['pt']['value']
+		new_sense = wdwbi.Sense()
+		new_sense.glosses.set(language="pt", value=gloss)
+		sense_xml_id = sense['claims']['P6'][0]['mainsnak']['datavalue']['value']
+		for prop in sense['claims']:
+			if prop == "P6":  # DLP xml-id
+				references = wdwbi.References()
+				reference = wdwbi.Reference()
+				reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
+				references.add(reference)
+				new_sense.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=sense_xml_id, references=references))
+			elif prop in wd_mapping:
+				wd_prop = wd_mapping[prop]
+				for claim in sense['claims'][prop]:
+					if claim['mainsnak']['datatype'] == "wikibase-item":
+						wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
+						references = wdwbi.References()
+						reference = wdwbi.Reference()
+						reference.add(wdwbi.ExternalID(prop_nr="P14752", value=sense_xml_id))
+						reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
+						references.add(reference)
+						new_sense.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references),
+											 action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
+		wd_lexeme.senses.add(new_sense)
+
+	wd_lexeme.write()
+	print(f"Successfully written to https://www.wikidata.org/wiki/Lexeme:{wd_lexeme.id}")
+
+	# write entry mapping to Wikibase
+	write_mapping(wb_lexeme_id, wd_lexeme.id, "lexeme")
+	# write sense mappings to Wikibase
+	wd_senses = wd_lexeme.get_json()['senses']
+	for wd_sense in wd_senses:
+		wd_sense_id = wd_sense['id']
+		if "P14752" in wd_sense['claims']:
+			xml_id = wd_sense['claims']['P14752'][0]['mainsnak']['datavalue']['value']
+			for wb_sense in wb_item['senses']:
+				if wb_sense['claims']['P6'][0]['mainsnak']['datavalue']['value'] == xml_id:
+					wb_sense_id = wb_sense['id']
+					write_mapping(wb_sense_id, wd_sense_id, "sense")
