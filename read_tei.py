@@ -36,23 +36,8 @@ pos_codes = {
     r"^adv\.": "Q13" # adverb
              }
 
-# gender_codes = {
-#     r" m\.": "Q499327", # masculine
-#     r" f\.": "Q1775415" # feminine
-#               }
-
 source_file = "source/dic.xml"
 error_report = "entry_id\tentry_status\terror\n"
-
-# load existing wikidata entries
-# with open('source/Wikidata_pt_lexemes.csv') as csvfile:
-#     reader = csv.DictReader(csvfile)
-#     existing = {}
-#     for row in reader:
-#         if row['lemma'] not in existing:
-#             existing[row['lemma']] = [row]
-#         else:
-#             existing[row['lemma']].append(row)
 
 # load dictionary
 tree = ET.ElementTree(file=source_file)
@@ -80,14 +65,6 @@ def get_entry_info(entry, status=""):
                 wb_pos = pos_codes[pos_code]
                 print(f"POS is {wb_pos}")
                 entry_object['pos'] = wb_pos
-                # if wb_pos == "Q1084": # noun entry
-                #     # get gender
-                #     entry_object['genders'] = []
-                #     for gender_code in gender_codes:
-                #         if re.search(gender_code, gramgrp_text):
-                #             wd_gender = gender_codes[gender_code]
-                #             print(f"Gender is {wd_gender}")
-                #             entry_object['genders'].append(wd_gender)
         if "pos" not in entry_object:
             return None
         if gramgrp_text not in grampgrp_codes:
@@ -151,16 +128,6 @@ def get_sense_info(sense):
         else:
             error_report += f"{result_entry['xml_id']}\t{entry_status}\tempty <definition> in sense {sense_id}\n"
     return sense_object
-
-# def check_if_exists(entry_object):
-#     global existing
-#     if entry_object['lemma'] in existing:
-#         for row in existing[entry_object['lemma']]:
-#             if row['category'].replace("http://www.wikidata.org/entity/","") == entry_object['pos']:
-#                 matching_uri = row['lexemeId']
-#                 print(f"Found matching lexeme {matching_uri}")
-#                 return matching_uri
-#     return None
 
 result_entries = []
 # iterate through entries
