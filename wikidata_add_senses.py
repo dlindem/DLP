@@ -28,73 +28,7 @@ token = get_token()
 
 def write_mapping(wb_entity, wd_entity, entity_type):
     global token
-    claim_id = None
-    while (not claim_id):
-        try:
-            request = site.post('wbcreateclaim', token=token, entity=wb_entity, property="P1", snaktype="value",
-                                value=f'"{wd_entity}"',
-                                bot=1, summary=f"Wikidata {entity_type} created from scratch.")
-            if request['success'] == 1:
-                done = True
-                claim_id = request['claim']['id']
-                print(f"Wikibase: Created claim {wb_entity} - P1 - {wd_entity}...", end=" ")
-            time.sleep(.34)
-        except Exception as ex:
-            if 'Invalid CSRF token.' in str(ex):
-                print('Wait a sec. Must get a new CSRF token...')
-                token = get_token()
-            else:
-                print('Claim creation failed, will try again...\n' + str(ex))
-                time.sleep(4)
 
-    guidfix = re.compile(r'^(L\d+\-S\d+)\-')  # senses
-    claim_id = re.sub(guidfix, r'\1$', claim_id)
-    guidfix = re.compile(r'^(L\d+)\-([^\-$]{8})')  # lexemes
-    claim_id = re.sub(guidfix, r'\1$\2', claim_id)
-    # provenance comment qualifier
-    comment = "added to existing Wikidata lexeme"
-    while True:
-        try:
-            setqualifier = site.post('wbsetqualifier', token=token, claim=claim_id, property="P14", snaktype="value",
-                                     value=f'"{comment}"', bot=1)
-            if setqualifier['success'] == 1:
-                print('Qualifier set successfully (' + comment + ').', end=" ")
-                time.sleep(.34)
-                break
-        except Exception as ex:
-            if 'Invalid CSRF token.' in str(ex):
-                print('Wait a sec. Must get a new CSRF token...')
-                time.sleep(10)
-                token = get_token()
-            else:
-                print(str(ex))
-                print('Qualifier set failed, will try again...')
-            time.sleep(2)
-    # wikidata edit time reference
-    nowtime = "+" + datetime.now().isoformat()[:11] + "00:00:00Z"
-    refsnaks = json.dumps(
-        {"P17": [{"snaktype": "value", "property": "P17",
-                  "datavalue": {"type": "time", "value": {"time": nowtime, "timezone": 0,
-                                                          "before": 0,
-                                                          "after": 0, "precision": 11,
-                                                          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"}}}]})
-    while True:
-        try:
-            setref = site.post('wbsetreference', token=token, statement=claim_id, index=0, snaks=refsnaks, bot=1)
-            if setref['success'] == 1:
-                print(f'Time reference {nowtime} successfully set.')
-                time.sleep(.34)
-                return True
-        except Exception as ex:
-            if 'Invalid CSRF token.' in str(ex):
-                print('Wait a sec. Must get a new CSRF token...')
-                time.sleep(10)
-                token = get_token()
-            else:
-                print(str(ex))
-                print('Reference set failed, will try again...')
-            print(str(ex))
-            time.sleep(5)
 
 
 # Main #
@@ -118,29 +52,31 @@ for item in result:
 
 print("Wikidata mapping loaded.")
 # get Wikibase lexemes aligned to Wikidata, and information about senses, and senses aligned to Wikidata
-#
-print("Getting Wikibase lexemes from SPARQL...")
-url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Flemma%20%3FposLabel%20(count(distinct%20%3Fsense)%20as%20%3Fsenses)%20%3Fwd_lexeme%20(count(distinct%20%3Faligned_wd_sense)%20as%20%3Faligned_senses)%20(group_concat(distinct%20%3Falignment)%20as%20%3Falignments)%20%20where%0A%0A%7B%20%3Flexeme%20dct%3Alanguage%20ilwb%3AQ3%3B%20wikibase%3Alemma%20%3Flemma%3B%20wikibase%3AlexicalCategory%20%3Fpos%3B%20ildp%3AP1%20%3Fwd.%0A%20%3Fpos%20ildp%3AP1%20%3Fwd_pos%3B%20rdfs%3Alabel%20%3FposLabel.%20filter(lang(%3FposLabel)%3D%22en%22)%0A%20optional%20%7B%3Flexeme%20ontolex%3Asense%20%3Fsense.%7D%0A%20optional%20%7B%3Flexeme%20ontolex%3Asense%20%3Faligned_sense.%20%3Faligned_sense%20ildp%3AP1%20%3Faligned_wd_sense.%20bind(concat(strafter(str(%3Faligned_sense)%2Cstr(ilwb%3A))%2C%22%3A%22%2C%3Faligned_wd_sense)%20as%20%3Falignment)%7D%0A%20bind(iri(concat(str(wd%3A)%2C%3Fwd))%20as%20%3Fwd_lexeme)%0A%20%0A%7D%20group%20by%20%3Flexeme%20%3Flemma%20%3FposLabel%20%3Fsenses%20%3Fwd_lexeme%20%3Faligned_senses%20%3Falignments"
+# Query: https://labur.eus/drvuxozt
+print("Getting Wikibase lexeme data from SPARQL...")
+url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Fsenses%20%3Fwd_lexeme%20%3Faligned_senses%20%3Falignments%0A%0Awhere%20%7B%0A%0A%7B%20SELECT%20%3Flexeme%20(count(distinct%20%3Fsense)%20as%20%3Fsenses)%20%3Fwd_lexeme%20(count(distinct%20%3Faligned_wd_sense)%20as%20%3Faligned_senses)%20(group_concat(distinct%20%3Falignment)%20as%20%3Falignments)%20%20where%0A%0A%7B%20%3Flexeme%20dct%3Alanguage%20ilwb%3AQ3%3B%20ildp%3AP1%20%3Fwd.%0A%20optional%20%7B%3Flexeme%20ontolex%3Asense%20%3Fsense.%7D%0A%20optional%20%7B%3Flexeme%20ontolex%3Asense%20%3Faligned_sense.%20%3Faligned_sense%20ildp%3AP1%20%3Faligned_wd_sense.%20bind(concat(strafter(str(%3Faligned_sense)%2Cstr(ilwb%3A))%2C%22%3A%22%2C%3Faligned_wd_sense)%20as%20%3Falignment)%7D%0A%20bind(iri(concat(str(wd%3A)%2C%3Fwd))%20as%20%3Fwd_lexeme)%0A%20%0A%7D%20group%20by%20%3Flexeme%20%3Fsenses%20%3Fwd_lexeme%20%3Faligned_senses%20%3Falignments%20%7D%0A%20%20filter(%3Fsenses%20%3E%20%3Faligned_senses)%20%7D"
 wb_r = requests.get(headers=headers, url=url)
 print(wb_r)
 result = wb_r.json()['results']['bindings']
 wb_lexemes = {}
 for row in result:
     wb_lexemes[row['lexeme']['value'].replace("https://illlp.wikibase.cloud/entity/", "")] = row
-print(f"Got {len(wb_lexemes)} lexemes with Wikidata alignment.")
+print(f"Got {len(wb_lexemes)} lexemes with Wikidata alignment and more senses than aligned senses.")
 
 count = 0
-for wb_lexeme_id in wb_lexemes:
+for wb_lexeme_id, wb_data in wb_lexemes.items():
     count += 1
+    if count > 3: # to be removed for production
+        sys.exit()
     print(f"\n[{count}/{len(wb_lexemes)}] now processing https://illlp.wikibase.cloud/entity/{wb_lexeme_id}.")
-    wb_sense_count = int(wb_lexemes[wb_lexeme_id]['senses']['value'])
-    aligned_senses_count = int(wb_lexemes[wb_lexeme_id]['aligned_senses']['value'])
-    if aligned_senses_count == wb_sense_count:
+    wb_sense_count = int(wb_data['senses']['value'])
+    aligned_senses_count = int(wb_data['aligned_senses']['value'])
+    if aligned_senses_count == wb_sense_count: # will not occur: sparql query filters these
         print(f"All senses are aligned. Will skip this lexeme.")
         continue
 
     alignments = {}
-    raw_alignments = wb_lexemes[wb_lexeme_id]['alignments']['value']
+    raw_alignments = wb_data['alignments']['value']
     if len(raw_alignments) > 0:
         pairs = raw_alignments.split(' ')
         for pair in pairs:
@@ -155,23 +91,23 @@ for wb_lexeme_id in wb_lexemes:
         f"Got data for https://illlp.wikibase.cloud/wiki/Lexeme:{wb_lexeme_id}, with {len(wb_item['senses'])} senses.")
 
     # get wd lexeme
-    wd_lexeme_id = wb_lexemes[wb_lexeme_id]['wd_lexeme']['value'].replace("http://www.wikidata.org/entity/", "")
+    wd_lexeme_id = wb_data['wd_lexeme']['value'].replace("http://www.wikidata.org/entity/", "")
     wd_lexeme = wdwbi.wbi.lexeme.get(entity_id=wd_lexeme_id)
 
     for wb_sense in wb_item['senses']:
         sense_xml_id = wb_sense['claims']['P6'][0]['mainsnak']['datavalue']['value']
         if wb_sense['id'] in alignments:
             print(f"Sense {wb_sense['id']} is already aligned to {alignments[wb_sense['id']]}...")
-            # wd_sense_xml_id = None
-            # for wd_s in wd_lexeme.get_json()['senses']:
-            #     if wd_s['id'] == alignments[wb_sense['id']]:
-            #         wd_sense_xml_id = wd_s['claims']['P14752'][0]['mainsnak']['datavalue']['value']
-            #         break
-            # if wd_sense_xml_id != sense_xml_id:
-            #     print(f"Fatal error: Sense XML ID on Wikibase and Wikidata do not match.")
-            #     sys.exit(1)
-            # else:
-            #     print(f"Sense XML ID on Wikibase and Wikidata do match. OK.")
+            wd_sense_xml_id = None
+            for wd_s in wd_lexeme.get_json()['senses']:
+                if wd_s['id'] == alignments[wb_sense['id']]:
+                    wd_sense_xml_id = wd_s['claims']['P14752'][0]['mainsnak']['datavalue']['value']
+                    break
+            if wd_sense_xml_id != sense_xml_id:
+                print(f"\nFatal error: Sense XML ID on Wikibase ({alignments[wb_sense['id']]}) and Wikidata ({wd_sense_xml_id}) do not match.")
+                sys.exit(1)
+            else:
+                print(f"Sense XML ID on Wikibase and Wikidata do match. OK.")
             continue
 
         gloss = wb_sense['glosses']['pt']['value'].replace(" ,", "")
@@ -185,7 +121,7 @@ for wb_lexeme_id in wb_lexemes:
                 reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
                 references.add(reference)
                 new_sense.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=sense_xml_id, references=references))
-            elif prop in wd_mapping:
+            elif prop in ["P9", "P10", "P11"]: # language style, location of sense use, field of use
                 wd_prop = wd_mapping[prop]
                 for claim in wb_sense['claims'][prop]:
                     if claim['mainsnak']['datatype'] == "wikibase-item":
@@ -198,7 +134,7 @@ for wb_lexeme_id in wb_lexemes:
                         new_sense.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references),
                                              action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
         wd_lexeme.senses.add(new_sense)
-        print(f"Sense {wb_sense['id']} has been added as new sense to the lexeme.")Y
+        print(f"Sense {wb_sense['id']} has been added as new sense to the lexeme.")
     wd_lexeme.write()
     print(f"Successfully written to https://www.wikidata.org/wiki/Lexeme:{wd_lexeme.id}")
 
@@ -211,4 +147,74 @@ for wb_lexeme_id in wb_lexemes:
             for wb_sense in wb_item['senses']:
                 wb_sense_id = wb_sense['id']
                 if wb_sense['claims']['P6'][0]['mainsnak']['datavalue']['value'] == xml_id and wb_sense_id not in alignments:
-                    write_mapping(wb_sense_id, wd_sense_id, "sense")
+                    # write mapping information to Wikibase
+                    claim_id = None
+                    while (not claim_id):
+                        try:
+                            request = site.post('wbcreateclaim', token=token, entity=wb_sense_id, property="P1",
+                                                snaktype="value",
+                                                value=f'"{wd_sense_id}"',
+                                                bot=1, summary=f"Wikidata sense created from scratch.")
+                            if request['success'] == 1:
+                                done = True
+                                claim_id = request['claim']['id']
+                                print(f"Wikibase: Created claim {wb_sense_id} - P1 - {wd_sense_id}...", end=" ")
+                            time.sleep(.34)
+                        except Exception as ex:
+                            if 'Invalid CSRF token.' in str(ex):
+                                print('Wait a sec. Must get a new CSRF token...')
+                                token = get_token()
+                            else:
+                                print('Claim creation failed, will try again...\n' + str(ex))
+                                time.sleep(4)
+
+                    guidfix = re.compile(r'^(L\d+\-S\d+)\-')  # senses
+                    claim_id = re.sub(guidfix, r'\1$', claim_id)
+                    guidfix = re.compile(r'^(L\d+)\-([^\-$]{8})')  # lexemes
+                    claim_id = re.sub(guidfix, r'\1$\2', claim_id)
+                    # provenance comment qualifier
+                    comment = "added to existing Wikidata lexeme"
+                    while True:
+                        try:
+                            setqualifier = site.post('wbsetqualifier', token=token, claim=claim_id, property="P14",
+                                                     snaktype="value",
+                                                     value=f'"{comment}"', bot=1)
+                            if setqualifier['success'] == 1:
+                                print('Qualifier set successfully (' + comment + ').', end=" ")
+                                time.sleep(.34)
+                                break
+                        except Exception as ex:
+                            if 'Invalid CSRF token.' in str(ex):
+                                print('Wait a sec. Must get a new CSRF token...')
+                                time.sleep(10)
+                                token = get_token()
+                            else:
+                                print(str(ex))
+                                print('Qualifier set failed, will try again...')
+                            time.sleep(2)
+                    # wikidata edit time reference
+                    nowtime = "+" + datetime.now().isoformat()[:11] + "00:00:00Z"
+                    refsnaks = json.dumps(
+                        {"P17": [{"snaktype": "value", "property": "P17",
+                                  "datavalue": {"type": "time", "value": {"time": nowtime, "timezone": 0,
+                                                                          "before": 0,
+                                                                          "after": 0, "precision": 11,
+                                                                          "calendarmodel": "http://www.wikidata.org/entity/Q1985727"}}}]})
+                    while True:
+                        try:
+                            setref = site.post('wbsetreference', token=token, statement=claim_id, index=0,
+                                               snaks=refsnaks, bot=1)
+                            if setref['success'] == 1:
+                                print(f'Time reference {nowtime} successfully set.')
+                                time.sleep(.34)
+                                break
+                        except Exception as ex:
+                            if 'Invalid CSRF token.' in str(ex):
+                                print('Wait a sec. Must get a new CSRF token...')
+                                time.sleep(10)
+                                token = get_token()
+                            else:
+                                print(str(ex))
+                                print('Reference set failed, will try again...')
+                            print(str(ex))
+                            time.sleep(5)
