@@ -36,7 +36,7 @@ def write_mapping(wb_entity, wd_entity, type):
 			if request['success'] == 1:
 				done = True
 				claim_id = request['claim']['id']
-				print(f"Created claim: {wb_entity} - P1 - {wd_entity}...", end=" ")
+				print(f"Wikibase {type} claim created: {wb_entity} - P1 - {wd_entity}...", end=" ")
 			time.sleep(.34)
 		except Exception as ex:
 			if 'Invalid CSRF token.' in str(ex):
@@ -46,12 +46,34 @@ def write_mapping(wb_entity, wd_entity, type):
 				print('Claim creation failed, will try again...\n' + str(ex))
 				time.sleep(4)
 
-
-	guidfix = re.compile(r'^(Q\d+)\-')
+	guidfix = re.compile(r'^(L\d+\-S\d+)\-')  # senses
 	claim_id = re.sub(guidfix, r'\1$', claim_id)
-
+	guidfix = re.compile(r'^(L\d+)\-([^\-$]{8})')  # lexemes
+	claim_id = re.sub(guidfix, r'\1$\2', claim_id)
+	# for entries: "newly created Wikidata entry" provenance comment qualifier
+	if type == "entry":
+		comment = "new Wikidata lexeme created"
+	else:
+		comment = "added to new Wikidata lexeme"
+	while True:
+		try:
+			setqualifier = site.post('wbsetqualifier', token=token, claim=claim_id, property="P14", snaktype="value",
+									 value=f'"{comment}"', bot=1)
+			if setqualifier['success'] == 1:
+				print('Qualifier set successfully ("' + comment + '").', end= " ")
+				time.sleep(.34)
+				break
+		except Exception as ex:
+			if 'Invalid CSRF token.' in str(ex):
+				print('Wait a sec. Must get a new CSRF token...')
+				time.sleep(10)
+				token = get_token()
+			else:
+				print(str(ex))
+				print('Qualifier set failed, will try again...')
+			time.sleep(2)
+	# wikidata edit time reference
 	nowtime = "+" + datetime.now().isoformat()[:11] + "00:00:00Z"
-
 	refsnaks = json.dumps(
 	{"P17": [{"snaktype": "value", "property": "P17",
 			  "datavalue": {"type": "time", "value": {"time": nowtime, "timezone": 0,
@@ -66,7 +88,13 @@ def write_mapping(wb_entity, wd_entity, type):
 				time.sleep(.34)
 				return True
 		except Exception as ex:
-			print('Reference set failed, will try again...')
+			if 'Invalid CSRF token.' in str(ex):
+				print('Wait a sec. Must get a new CSRF token...')
+				time.sleep(10)
+				token = get_token()
+			else:
+				print(str(ex))
+				print('Reference set failed, will try again...')
 			print(str(ex))
 			time.sleep(5)
 
@@ -91,9 +119,9 @@ for item in result:
 
 print("Wikidata mapping loaded.")
 
-# get Wikibase lexemes without aligned Wikidata lexeme (now set to limit 1)
-
-url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Fxml_id%20%3Fsource_date%20%20where%0A%0A%7B%20%3Flexeme%20ildp%3AP3%20ilwb%3AQ5%3B%20dct%3Alanguage%20ilwb%3AQ3%3B%20ilp%3AP6%20%5Bilps%3AP6%20%3Fxml_id%3B%20prov%3AwasDerivedFrom%20%5Bilpr%3AP12%20%3Fsource_date%5D%5D.%0A%20filter%20not%20exists%20%7B%3Flexeme%20ildp%3AP1%20%3Fwd_lexeme.%7D%0A%0A%7D%20limit%201%0A"
+# get Wikibase lexemes (no acronyms, no merge candidates) without aligned Wikidata lexeme (now set to limit 1)
+# https://tinyurl.com/2a8d22v9
+url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Fxml_id%20%3Fsource_date%20%20where%0A%0A%7B%20%3Flexeme%20ildp%3AP3%20ilwb%3AQ5%3B%20dct%3Alanguage%20ilwb%3AQ3%3B%20ilp%3AP6%20%5Bilps%3AP6%20%3Fxml_id%3B%20prov%3AwasDerivedFrom%20%5Bilpr%3AP12%20%3Fsource_date%5D%5D.%0A%20filter%20not%20exists%20%7B%3Flexeme%20ildp%3AP1%20%3Fwd_lexeme.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ19.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ21.%7D%0A%0A%7D%20limit%204%0A"
 wb_r = requests.get(headers=headers, url=url)
 print(wb_r)
 result = wb_r.json()['results']['bindings']
@@ -101,6 +129,7 @@ wb_lexemes = {}
 for row in result:
 	wb_lexemes[row['lexeme']['value'].replace("https://illlp.wikibase.cloud/entity/", "")] = row
 print(f"Got {len(wb_lexemes)} lexemes without Wikidata alignment.")
+time.sleep(2)
 
 count = 0
 for wb_lexeme_id in wb_lexemes:
@@ -117,7 +146,9 @@ for wb_lexeme_id in wb_lexemes:
 
 	# build new lexeme
 	wd_lexeme = wdwbi.wbi.lexeme.new(language=language, lexical_category=lexical_category)
-	wd_lexeme.lemmas.set(language="pt", value=wb_item['lemmas']['pt']['value'])
+	for lemlang, lemdict in wb_item['lemmas'].items():
+		wd_lexeme.lemmas.set(language=lemlang, value=lemdict['value'])
+		print(f"Set lemma for {lemlang}: '{lemdict['value']}'")
 	wb_lexeme_claims = wb_item['claims']
 	for prop in wb_lexeme_claims:
 		if prop == "P6": # DLP xml-id
@@ -129,6 +160,7 @@ for wb_lexeme_id in wb_lexemes:
 			reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
 			references.add(reference)
 			wd_lexeme.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=xml_id, references=references))
+			print(f"Entry level DLP alignment claim set: P14752 > {xml_id}")
 		elif prop in wd_mapping:
 			wd_prop = wd_mapping[prop]
 			for claim in wb_lexeme_claims[prop]:
@@ -140,7 +172,7 @@ for wb_lexeme_id in wb_lexemes:
 					reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
 					references.add(reference)
 					wd_lexeme.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references), action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
-
+					print(f"Entry level claim added: {wd_prop} > {wd_value}")
 	# build senses from scratch
 	for sense in wb_item['senses']:
 		gloss = sense['glosses']['pt']['value']
@@ -154,6 +186,7 @@ for wb_lexeme_id in wb_lexemes:
 				reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
 				references.add(reference)
 				new_sense.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=sense_xml_id, references=references))
+				print(f"Adding sense: {sense_xml_id}")
 			elif prop in wd_mapping:
 				wd_prop = wd_mapping[prop]
 				for claim in sense['claims'][prop]:
@@ -166,6 +199,7 @@ for wb_lexeme_id in wb_lexemes:
 						references.add(reference)
 						new_sense.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references),
 											 action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
+						print(f"Claim added to sense: {wd_prop} > {wd_value}")
 		wd_lexeme.senses.add(new_sense)
 
 	wd_lexeme.write()
