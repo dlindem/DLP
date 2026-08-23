@@ -158,8 +158,9 @@ previous_wd_lid = None
 wd_item = None
 for lid in wb_entities.keys():
 	count += 1
-	if count < 755:
-		continue
+	# if count == 2:
+	# 	sys.exit()
+
 	print(f"\n[{count}/{len(wb_entities)}] now processing entry https://illlp.wikibase.cloud/wiki/Lexeme:{lid}.")
 
 	# get complete Wikibase item
@@ -204,7 +205,7 @@ for lid in wb_entities.keys():
 						wd_gender = "Q1775415" # feminine
 				elif prop == "P16":
 					for claim in wb_item['claims'][prop]:
-						if claim['mainsnak']['datavalue']['value']['id'] == "Q564":
+						if claim['mainsnak']['datavalue']['value']['id'] == "Q465":
 							plurale_tantum = True
 
 			if wd_gender:
@@ -237,7 +238,7 @@ for lid in wb_entities.keys():
 				with open('source/alignment-patrol.csv', 'a') as file:
 					file.write(f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tP1552\tQ138246 (plurale tantum)\tadd\t{datetime.now().isoformat()}\n")
 
-		elif entity_type == "sense":
+		elif entity_type == "sense": # language style, location of sense use, field of use
 			wd_sense = None
 			for sense in wb_item['senses']:
 				if sense['id'] == entity:
@@ -254,7 +255,7 @@ for lid in wb_entities.keys():
 			if not wd_sense:
 				input(f"Fatal error: Did not find Wikidata sense in lexeme: {wd_id}")
 			for prop in wb_sense['claims']:
-				if prop in wd_mapping:
+				if prop in ["P9", "P10", "P11"]:
 					wd_value = None
 					for claim in wb_sense['claims'][prop]:
 						value = claim['mainsnak']['datavalue']['value']['id']
