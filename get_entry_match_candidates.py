@@ -51,6 +51,7 @@ for row in result:
 
 
 one_match = []
+one_match_csv = "Wikibase\tP1\tWikidata\tP14\tcomment\n"
 multiple_match = []
 
 for wd_lemma, data in wikidata.items():
@@ -69,7 +70,7 @@ for wd_lemma, data in wikidata.items():
 		if len(matches) == 1:
 			# print(f"{lemma} has one match")
 			one_match.append({"wikibase": matches[0], "wikidata": entry['lexeme'], "lemma": wd_lemma, "pos": wd_pos})
-
+			one_match_csv += f'{matches[0]}\tP1\t"{entry['lexeme']}"\tP14\t"unambiguous lempos match"\n'
 		elif len(matches) > 1:
 			# print(f"{lemma} has multiple matches")
 			multiple_match.append(
@@ -79,18 +80,9 @@ for wd_lemma, data in wikidata.items():
 with open('source/one-match.json', 'w') as outfile:
 	json.dump(one_match, outfile, indent=2)
 
-df = open('source/one-match.csv', 'w', newline='')
-cw = csv.writer(df)
+with open('source/one-match.csv', 'w') as outfile:
+	outfile.write(one_match_csv)
 
-c = 0
-for data in one_match:
-	if c == 0:
-		header = data.keys()
-		cw.writerow(header)
-		c += 1
-	cw.writerow(data.values())
-
-df.close()
 
 
 with open('source/multiple-match.json', 'w') as outfile:
