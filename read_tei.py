@@ -38,7 +38,7 @@ pos_codes = {
 
 source_file = "source/dic.xml"
 error_report = "entry_id\tentry_status\terror\n"
-lemma_types = {"pt_pref": 0, "pt_alt": 0, "pt_br": 0, "pt_ao1990": 0, "other": 0}
+lemma_attribs = {}
 # load dictionary
 tree = ET.ElementTree(file=source_file)
 dictionary = tree.getroot()
@@ -78,45 +78,61 @@ def get_entry_info(entry, status=""):
 			if codes['pl'] == "x":
 				entry_object['plurale_tantum'] = True
 
+	for usg in entry.findall('{http://www.tei-c.org/ns/1.0}usg'):
+		if 'usg' not in entry_object:
+			entry_object['usg'] = []
+		if usg.attrib['type'] not in usg_codes:
+			continue
+		if usg.attrib['type'] == 'geographic' and usg.text == "Region.":  # extra handling for "Portuguese Regionalism"
+			print("Extra handling for Portuguese Regionalism")
+			entry_object['usg'].append({'prop': "P10", 'val': "Q239"})  # language style (register) "regionalism"
+			entry_object['usg'].append({'prop': "P11", 'val': "Q238"})  # location of sense use (geographic) "Portugal"
+		elif usg.text not in usg_codes[usg.attrib['type']]:
+			print(f"Unknown usg value of type {usg.attrib['type']}: {usg.text}")
+			error_report += f"{result_entry['xml_id']}\t{entry_status}\tunknown <usg> of type '{usg.attrib['type']}': {usg.text}\n"
+		else:
+			entry_object['usg'].append({'prop': usg_codes[usg.attrib['type']][usg.text]['prop'],
+			                            'val': usg_codes[usg.attrib['type']][usg.text]['val']})
+			print(f"Added usg of type : {usg.attrib['type']}: {usg.text} > {usg_codes[usg.attrib['type']][usg.text]}")
+
 	for form in entry.findall('{http://www.tei-c.org/ns/1.0}form'):
 
-		pt_pref_lemma = None
-		pt_alt_lemma = None
-		pt_br_lemma = None
-		entry_object['lemmas'] = {}
+		entry_object['lemmas'] = []
 		for orth in form.findall('{http://www.tei-c.org/ns/1.0}orth'):
 			if not orth.text:
 				print("Fatal error: No orth text.")
 				error_report += f"{entry_id}\t{status}\tEmpty <orth>\n"
-				return None
+				continue
 			if "render" in orth.attrib: # hidden in online DLP
 				continue
+
+			# exclude MWE
 			lemma = orth.text.strip()
-			print(f'Lemma is "{lemma}"')
-			orth_raw = ElementTree.tostring(orth).decode("utf-8")
-			if "geographic" and "Bras." in orth_raw and not pt_br_lemma:
-				entry_object['lemmas']['pt-br'] = {"value": lemma, "language": "pt-br"}
-				pt_br_lemma = lemma
-				lemma_types['pt_br'] += 1
-			elif "ao" in orth.attrib:
-				if orth.attrib['ao'] == "AO45":
-					entry_object['lemmas']['pt-ao1990'] = {"value": lemma, "language": "pt-ao1990"}
-					lemma_types['pt_ao1990'] += 1
-			elif not pt_pref_lemma:
-				entry_object['lemmas']['pt'] = {"value": lemma, "language": "pt"}
-				pt_pref_lemma = lemma
-				lemma_types['pt_pref'] += 1
-			elif not pt_alt_lemma:
-				entry_object['lemmas']['pt-x-Q59342809'] = {"value": lemma, "language": "pt-x-Q59342809"}
-				pt_alt_lemma = lemma
-				lemma_types['pt_alt'] += 1
+			if " " in lemma:
+				return None
+
+			if orth.attrib:
+				attribs = orth.attrib
 			else:
-				lemma_types['other'] += 1
-		if not pt_pref_lemma:
+				attribs = {}
+			print(attribs)
+			print(f'Found lemma "{lemma}" with {len(attribs)} attributes.')
+			for usg in orth.findall('{http://www.tei-c.org/ns/1.0}usg'):
+				if "type" in usg.attrib:
+					if usg.attrib['type'] == 'geographic' and usg.text == "Bras.":
+						attribs["geographic"] = "pt-br"
+			entry_object['lemmas'].append((lemma, attribs))
+			for attrib, value in attribs.items():
+				if attrib not in lemma_attribs:
+					lemma_attribs[attrib] = [value]
+				else:
+					lemma_attribs[attrib].append(value)
+
+		if len(entry_object['lemmas']) == 0:
+			print(f"Got no lemma... goes to error report, and is skipped.")
+			error_report += f"{entry_id}\t{status}\tEntry ID with no valid <orth> content\n"
 			return None
-		# exclude MWE
-		if " " in pt_pref_lemma:
-			return None
+
 	return entry_object
 
 def get_sense_info(sense):
@@ -221,7 +237,7 @@ with open("error_report.csv", "w") as outfile:
 
 print(f"Finished. Written {len(result_entries)} entries to result_entries.json")
 with open("source/lemma_types.json", "w") as outfile:
-	json.dump(lemma_types, outfile, indent=2)
+	json.dump(lemma_attribs, outfile, indent=2)
 
 print(f"\nSubsenses and their parents (excluded from results):\n\n{json.dumps(subsenses, indent=2)}")
 

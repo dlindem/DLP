@@ -1,5 +1,8 @@
 import csv, sys, time, re
 from datetime import datetime
+
+import ilwbi
+
 import wdwbi # Wikidata via WikibaseIntegrator
 import mwclient # Wikibase via mwclient
 from config_private import wb_bot_user, wb_bot_pwd
@@ -7,6 +10,8 @@ import requests, json
 from wikibaseintegrator.wbi_enums import ActionIfExists
 
 headers = {"User-Agent": "User:DL2204 python requests"}
+
+
 
 site = mwclient.Site("illlp.wikibase.cloud")
 def get_token():
@@ -119,9 +124,9 @@ for item in result:
 
 print("Wikidata mapping loaded.")
 
-# get Wikibase lexemes (no acronyms, no merge candidates) without aligned Wikidata lexeme (now set to limit 1)
-# https://tinyurl.com/2a8d22v9
-url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Fxml_id%20%3Fsource_date%20%20where%0A%0A%7B%20%3Flexeme%20ildp%3AP3%20ilwb%3AQ5%3B%20dct%3Alanguage%20ilwb%3AQ3%3B%20ilp%3AP6%20%5Bilps%3AP6%20%3Fxml_id%3B%20prov%3AwasDerivedFrom%20%5Bilpr%3AP12%20%3Fsource_date%5D%5D.%0A%20filter%20not%20exists%20%7B%3Flexeme%20ildp%3AP1%20%3Fwd_lexeme.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ19.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ21.%7D%0A%0A%7D%20limit%204%0A"
+# get Wikibase lexemes (no acronyms, no redirect entries) without aligned Wikidata lexeme (now set to limit 1)
+# https://tinyurl.com/2cvkjvdd
+url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Fxml_id%20%3Fsource_date%20%20where%0A%0A%7B%20%3Flexeme%20ildp%3AP3%20ilwb%3AQ5%3B%20dct%3Alanguage%20ilwb%3AQ3%3B%20ilp%3AP6%20%5Bilps%3AP6%20%3Fxml_id%3B%20prov%3AwasDerivedFrom%20%5Bilpr%3AP12%20%3Fsource_date%5D%5D.%0A%20filter%20not%20exists%20%7B%3Flexeme%20ildp%3AP1%20%3Fwd_lexeme.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ19.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ22.%7D%0A%0A%7D%20limit%204%0A"
 wb_r = requests.get(headers=headers, url=url)
 print(wb_r)
 result = wb_r.json()['results']['bindings']
@@ -146,60 +151,97 @@ for wb_lexeme_id in wb_lexemes:
 
 	# build new lexeme
 	wd_lexeme = wdwbi.wbi.lexeme.new(language=language, lexical_category=lexical_category)
+
+	# handle duplicate lemma problem (from bug in write_entries.py)
+	if "pt-x-Q59342809" in wb_item['lemmas'] and "pt" in wb_item['lemmas']:
+		if wb_item['lemmas']['pt-x-Q59342809']['value'] == wb_item['lemmas']['pt']['value']:
+			del wb_item['lemmas']['pt-x-Q59342809']
+	if "pt-x-Q59342809" in wb_item['lemmas'] and "pt-ao1990" in wb_item['lemmas']:
+		if wb_item['lemmas']['pt-x-Q59342809']['value'] == wb_item['lemmas']['pt-ao1990']['value']:
+			del wb_item['lemmas']['pt-x-Q59342809']
+
+	# write lemmata
 	for lemlang, lemdict in wb_item['lemmas'].items():
 		wd_lexeme.lemmas.set(language=lemlang, value=lemdict['value'])
 		print(f"Set lemma for {lemlang}: '{lemdict['value']}'")
+
+	# process claims
+	references = wdwbi.References()
+	reference = wdwbi.Reference()
+	reference.add(wdwbi.ExternalID(prop_nr="P14752", value=xml_id))
+	reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
+	references.add(reference)
+
+	p6_references = wdwbi.References()
+	p6_reference = wdwbi.Reference()
+	p6_reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
+	p6_references.add(p6_reference)
+
 	wb_lexeme_claims = wb_item['claims']
+	entry_claims_for_senses = []
+
 	for prop in wb_lexeme_claims:
 		if prop == "P6": # DLP xml-id
 			if wb_lexeme_claims[prop][0]['mainsnak']['datavalue']['value'] != xml_id:
 				print(f"Fatal error: Source list xml_id does not match to lexeme xml_id: {xml_id}")
 				sys.exit()
-			references = wdwbi.References()
-			reference = wdwbi.Reference()
-			reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
-			references.add(reference)
-			wd_lexeme.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=xml_id, references=references))
+
+			wd_lexeme.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=xml_id, references=p6_references))
 			print(f"Entry level DLP alignment claim set: P14752 > {xml_id}")
-		elif prop in wd_mapping:
+
+		elif prop == "P15":  # grammatical gender
+			wd_gender = None
+			gender_items = []
+			for claim in wb_item['claims'][prop]:
+				gender_items.append(claim['mainsnak']['datavalue']['value']['id'])
+			if "Q17" in gender_items and "Q18" in gender_items:
+				wd_gender = "Q18478758"  # common of two genders
+			elif "Q17" in gender_items:
+				wd_gender = "Q499327"  # masculine
+			elif "Q18" in gender_items:
+				wd_gender = "Q1775415"  # feminine
+			wd_lexeme.claims.add(wdwbi.Item(prop_nr="P5185", value=wd_gender, references=references),
+								 action_if_exists=ActionIfExists.REPLACE_ALL)
+			print(f"Gender claim added: {wd_gender}")
+		elif prop == "P16": # plurale tantum
+			for claim in wb_item['claims'][prop]:
+				if claim['mainsnak']['datavalue']['value']['id'] == "Q465":
+					wd_lexeme.claims.add(wdwbi.Item(prop_nr="P1552", value="Q138246", references=references), action_if_exists=ilwbi.ActionIfExists.REPLACE_ALL)
+					print("Plurale tantum characteristic added.")
+		elif prop in ['P9', 'P10', 'P11']: # language style, location of sense use, field of use
 			wd_prop = wd_mapping[prop]
+			# add these entry-level claims to all senses
 			for claim in wb_lexeme_claims[prop]:
-				if claim['mainsnak']['datatype'] == "wikibase-item":
-					wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
-					references = wdwbi.References()
-					reference = wdwbi.Reference()
-					reference.add(wdwbi.ExternalID(prop_nr="P14752", value=xml_id))
-					reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
-					references.add(reference)
-					wd_lexeme.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references), action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
-					print(f"Entry level claim added: {wd_prop} > {wd_value}")
+				wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
+				entry_claims_for_senses.append(ilwbi.Item(prop_nr=prop, value=wd_value, references=references))
+
 	# build senses from scratch
+
 	for sense in wb_item['senses']:
 		gloss = sense['glosses']['pt']['value']
 		new_sense = wdwbi.Sense()
 		new_sense.glosses.set(language="pt", value=gloss)
 		sense_xml_id = sense['claims']['P6'][0]['mainsnak']['datavalue']['value']
+
+		references = wdwbi.References()
+		reference = wdwbi.Reference()
+		reference.add(wdwbi.ExternalID(prop_nr="P14752", value=sense_xml_id))
+		reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
+		references.add(reference)
+
+		new_sense.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=sense_xml_id, references=p6_references))
+		print(f"Adding sense: {sense_xml_id}")
 		for prop in sense['claims']:
-			if prop == "P6":  # DLP xml-id
-				references = wdwbi.References()
-				reference = wdwbi.Reference()
-				reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
-				references.add(reference)
-				new_sense.claims.add(wdwbi.ExternalID(prop_nr="P14752", value=sense_xml_id, references=references))
-				print(f"Adding sense: {sense_xml_id}")
-			elif prop in wd_mapping:
+			if prop in ["P9", "P10", "P11"]: # language style, location of sense use, field of use
 				wd_prop = wd_mapping[prop]
 				for claim in sense['claims'][prop]:
-					if claim['mainsnak']['datatype'] == "wikibase-item":
-						wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
-						references = wdwbi.References()
-						reference = wdwbi.Reference()
-						reference.add(wdwbi.ExternalID(prop_nr="P14752", value=sense_xml_id))
-						reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
-						references.add(reference)
-						new_sense.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references),
-											 action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
-						print(f"Claim added to sense: {wd_prop} > {wd_value}")
+					wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
+					new_sense.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references),
+										 action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
+					print(f"Claim added to sense: {wd_prop} > {wd_value}")
+		for claim in entry_claims_for_senses:
+			new_sense.claims.add(claim, action_if_exists=ilwbi.ActionIfExists.APPEND_OR_REPLACE)
+			print(f"Claim from entry level added to sense: {claim}")
 		wd_lexeme.senses.add(new_sense)
 
 	wd_lexeme.write()

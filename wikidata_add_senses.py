@@ -1,5 +1,8 @@
 import csv, sys, time, re
 from datetime import datetime
+
+import ilwbi
+
 import wdwbi  # Wikidata via WikibaseIntegrator
 import mwclient  # Wikibase via mwclient
 from config_private import wb_bot_user, wb_bot_pwd
@@ -86,6 +89,7 @@ for wb_lexeme_id, wb_data in wb_lexemes.items():
     wb_item_r = requests.get(headers=headers,
                              url=f"https://illlp.wikibase.cloud/wiki/Special:EntityData/{wb_lexeme_id}.json")
     wb_item = wb_item_r.json()['entities'][wb_lexeme_id]
+    entry_xml_id = wb_item['claims']['P6'][0]['mainsnak']['datavalue']['value']
     wb_lexeme_source_date = wb_item['claims']['P6'][0]['references'][0]['snaks']['P12'][0]['datavalue']['value']['time']
     print(
         f"Got data for https://illlp.wikibase.cloud/wiki/Lexeme:{wb_lexeme_id}, with {len(wb_item['senses'])} senses.")
@@ -93,6 +97,16 @@ for wb_lexeme_id, wb_data in wb_lexemes.items():
     # get wd lexeme
     wd_lexeme_id = wb_data['wd_lexeme']['value'].replace("http://www.wikidata.org/entity/", "")
     wd_lexeme = wdwbi.wbi.lexeme.get(entity_id=wd_lexeme_id)
+
+    # get possible claims on entry level that on Wikidata will belong to sense (all senses in the entry)
+    entry_claims_for_senses = {}
+    for prop in ["P9", "P10", "P11"]: # language style, location of sense use, field of use
+        if prop in wb_item['claims']:
+            if prop not in entry_claims_for_senses:
+                entry_claims_for_senses[prop] = []
+            for claim in wb_item['claims'][prop]:
+                value = claim['mainsnak']['datavalue']['value']['id']
+                entry_claims_for_senses[prop].append(value)
 
     for wb_sense in wb_item['senses']:
         sense_xml_id = wb_sense['claims']['P6'][0]['mainsnak']['datavalue']['value']
@@ -114,6 +128,17 @@ for wb_lexeme_id, wb_data in wb_lexemes.items():
         new_sense = wdwbi.Sense()
         new_sense.glosses.set(language="pt", value=gloss)
 
+        for prop in entry_claims_for_senses:
+            for value in entry_claims_for_senses[prop]:
+                wd_value = wd_mapping[value]
+                wd_prop = wd_mapping[prop]
+                references = wdwbi.References()
+                reference = wdwbi.Reference()
+                reference.add(wdwbi.ExternalID(prop_nr="P14752", value=entry_xml_id))
+                reference.add(wdwbi.Time(prop_nr="P813", time=wb_lexeme_source_date, precision=11))
+                references.add(reference)
+                new_sense.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references), action_if_exists=ilwbi.ActionIfExists.APPEND_OR_REPLACE)
+
         for prop in wb_sense['claims']:
             if prop == "P6":  # DLP xml-id
                 references = wdwbi.References()
@@ -133,6 +158,9 @@ for wb_lexeme_id, wb_data in wb_lexemes.items():
                         references.add(reference)
                         new_sense.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references),
                                              action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
+
+
+
         wd_lexeme.senses.add(new_sense)
         print(f"Sense {wb_sense['id']} has been added as new sense to the lexeme.")
     wd_lexeme.write()

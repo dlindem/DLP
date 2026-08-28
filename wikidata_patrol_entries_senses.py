@@ -1,7 +1,8 @@
 import csv, sys, time, re
 from datetime import datetime
-import mwclient  # Wikidata and Wikibase via mwclient
-from config_private import wb_bot_user, wb_bot_pwd, wd_bot_pwd, wd_bot_user
+import mwclient  # Wikidata via mwclient
+import ilwbi # Wikibase via WBI
+from config_private import wd_bot_pwd, wd_bot_user
 import requests, json
 
 headers = {"User-Agent": "User:DL2204 python requests"}
@@ -24,24 +25,6 @@ def get_wikidata_token():
 	print(f"Got fresh CSRF token for Wikidata.")
 	return wikidata_token
 wikidata_token = get_wikidata_token()
-
-wikibase = mwclient.Site("illlp.wikibase.cloud")
-def get_wikibase_token():
-	global wikibase
-
-	while True:
-		try:
-			login = wikibase.login(username=wb_bot_user, password=wb_bot_pwd)
-			break
-		except Exception as ex:
-			print('ILLLP Wikibase login via mwclient raised error: '+str(ex))
-			time.sleep(60)
-	# get wikibase_token
-	csrfquery = wikibase.api('query', meta='tokens')
-	wikibase_token = csrfquery['query']['tokens']['csrftoken']
-	print(f"Got fresh CSRF token for Wikibase.")
-	return wikibase_token
-wikibase_token = get_wikibase_token()
 
 def correct_claim(guid=None, value=None, xml_id=None, source_date=None):
 	choice = input("*** REALLY change gender to this lexeme on Wikidata? 'Y' for Yes, other for skipping.")
@@ -137,14 +120,14 @@ print("Wikidata mapping loaded.")
 # get Wikibase lexemes and senses aligned to Wikidata
 # https://tinyurl.com/2aao95tk
 print("Getting Wikibase aligned entities (entries and senses) from SPARQL...")
-url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Ftype%20%3Flid%20%3Fentity%20%3Fwd%20%3Fpatrolstamp%20%20where%0A%7B%0A%7B%20%3Fentity%20dct%3Alanguage%20ilwb%3AQ3%3B%20ildp%3AP1%20%3Fwd.%20bind(strafter(str(%3Fentity)%2Cstr(ilwb%3A))%20as%20%3Flid)%20bind(%22entry%22%20as%20%3Ftype)%0A%20%20optional%20%7B%3Fentity%20ildp%3AP18%20%3Fpatrolstamp.%7D%7D%20union%0A%7B%20%3Flexeme%20%20dct%3Alanguage%20ilwb%3AQ3%3B%20ontolex%3Asense%20%3Fentity.%20%3Fentity%20ildp%3AP1%20%3Fwd.%20bind(strafter(str(%3Flexeme)%2Cstr(ilwb%3A))%20as%20%3Flid)%20bind(%22sense%22%20as%20%3Ftype)%0A%20%20optional%20%7B%3Flexeme%20ildp%3AP18%20%3Fpatrolstamp.%7D%7D%0A%7D%20order%20by%20%3Flid"
+url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Ftype%20%3Flid%20%3Fentity%20%3Fwd%20%3Fpatrolstamp%20%20where%0A%7B%0A%7B%20%3Fentity%20dct%3Alanguage%20ilwb%3AQ3%3B%20ildp%3AP1%20%3Fwd.%20bind(strafter(str(%3Fentity)%2Cstr(ilwb%3A))%20as%20%3Flid)%20bind(%22entry%22%20as%20%3Ftype)%0A%20%20optional%20%7B%3Fentity%20ildp%3AP18%20%3Fpatrolstamp.%7D%7D%20union%0A%7B%20%3Flexeme%20%20dct%3Alanguage%20ilwb%3AQ3%3B%20ontolex%3Asense%20%3Fentity.%20%3Fentity%20ildp%3AP1%20%3Fwd.%20bind(strafter(str(%3Flexeme)%2Cstr(ilwb%3A))%20as%20%3Flid)%20bind(%22sense%22%20as%20%3Ftype)%0A%20%20optional%20%7B%3Flexeme%20ildp%3AP18%20%3Fpatrolstamp.%7D%7D%0A%7D%20order%20by%20%3Flid%20"
 wb_r = requests.get(headers=headers, url=url)
 print(wb_r)
 result = wb_r.json()['results']['bindings']
 wb_entities = {}
 for row in result:
 	if 'patrolstamp' in row:
-		if row['patrolstamp']['value'].startswith("2026-08"):
+		if row['patrolstamp']['value'].startswith("2026-08-27"):
 			print(f"Excluding entity patrolled on {row['patrolstamp']['value']}")
 			continue
 	if row['lid']['value'] not in wb_entities:
@@ -186,15 +169,58 @@ for lid in wb_entities.keys():
 									 url=f"https://www.wikidata.org/wiki/Special:EntityData/{wd_lid}.json")
 			wd_item = wd_item_r.json()['entities'][wd_lid]
 			print(f"Got data for https://www.wikidata.org/wiki/Lexeme:{wd_lid}, with {len(wd_item['senses'])} senses.")
-			previous_wd_lid = wd_lid
-		if entity_type == "entry": # gender and plurale tantum
-			xml_id = wb_item['claims']['P6'][0]['mainsnak']['datavalue']['value']
 
-			wd_gender = None
-			gender_items = []
-			plurale_tantum = False
+			previous_wd_lid = wd_lid
+		
+		if entity_type == "entry":
+			xml_id = wb_item['claims']['P6'][0]['mainsnak']['datavalue']['value']
+			if "P14752" not in wd_item['claims']:
+				input(f"Fatal error: No DLP external id claim in aligned entry.")
+			elif len(wd_item['claims']['P14752']) > 1:
+				input(f"Fatal error: More than on DLP external id claim in aligned entry.")
+			elif wd_item['claims']['P14752'][0]['mainsnak']['datavalue']['value'] != xml_id:
+				input(f"Fatal error: XML id in Wikibase and Wikidata do not match.")
+
+			# lemmas
+			# handle duplicate lemma problem (from bug in write_entries.py)
+			if "pt-x-Q59342809" in wb_item['lemmas'] and "pt" in wb_item['lemmas']:
+				if wb_item['lemmas']['pt-x-Q59342809']['value'] == wb_item['lemmas']['pt']['value']:
+					del wb_item['lemmas']['pt-x-Q59342809']
+			if "pt-x-Q59342809" in wb_item['lemmas'] and "pt-ao1990" in wb_item['lemmas']:
+				if wb_item['lemmas']['pt-x-Q59342809']['value'] == wb_item['lemmas']['pt-ao1990']['value']:
+					del wb_item['lemmas']['pt-x-Q59342809']
+			lemma_change = []
+			for lang, lemdict in wb_item['lemmas'].items():
+				if lang in wd_item['lemmas']:
+					if wd_item['lemmas'][lang]['value'] != lemdict['value']:
+						wd_item['lemmas'][lang]['value'] = lemdict['value']
+						lemma_change.append(lang)
+				else:
+					wd_item['lemmas'][lang] = lemdict
+					lemma_change.append(lang)
+
+			if len (lemma_change) > 0:
+				print(f"Will write updated lemma dictionary: {wd_item['lemmas']}")
+				comment = f"Lemma for {',  '.join(lemma_change)} updated from {xml_id}"
+				try:
+					request = wikidata.post('wbeditentity', token=wikidata_token, id=wd_lid, data=json.dumps(wd_item),
+					                        bot=1, summary=comment)
+					if request['success'] == 1:
+						print(f"Wikidata: Lemmas updated")
+					time.sleep(.34)
+				except Exception as ex:
+					if 'Invalid CSRF token.' in str(ex):
+						print('Wait a sec. Must get a new CSRF token...')
+						wikidata_token = get_wikidata_token()
+					else:
+						print('Lemma update failed...\n' + str(ex))
+					time.sleep(4)
+				print(wd_item)
+
+			# entry claims
 			for prop in wb_item['claims']:
 				if prop == "P15": # grammatical gender
+					gender_items = []
 					for claim in wb_item['claims'][prop]:
 						gender_items.append(claim['mainsnak']['datavalue']['value']['id'])
 					if "Q17" in gender_items and "Q18" in gender_items:
@@ -203,43 +229,64 @@ for lid in wb_entities.keys():
 						wd_gender = "Q499327" # masculine
 					elif "Q18" in gender_items:
 						wd_gender = "Q1775415" # feminine
+					gender_items = []
+					if "P5185" in wd_item['claims']:
+						for claim in wd_item['claims']["P5185"]:
+							gender_items.append(claim['mainsnak']['datavalue']['value']['id'])
+						if len(gender_items) > 1:
+							pass
+							# input(f"http://www.wikidata.org/entity/{wd_id} has more than one gender item. Check that. Any key to skip this gender statement.")
+						elif len(gender_items) == 1:
+							if gender_items[0] == wd_gender:
+								print(f"Checked gender, {wd_gender} is ok.")
+							else:
+								pass
+								# correct_claim(guid=wd_item['claims']["P5185"][0]['id'], value=wd_gender, xml_id=xml_id,
+								#               source_date=source_date)
+								# with open('source/alignment-patrol.csv', 'a') as file:
+								# 	file.write(
+								# 		f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tprop\t{wd_gender} (gender)\tupdate\t{datetime.now().isoformat()}\n")
+					else:
+						create_claim(subject=wd_id, prop="P5185", value=wd_gender, xml_id=xml_id,
+						             source_date=source_date)
+						with open('source/alignment-patrol.csv', 'a') as file:
+							file.write(
+								f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tP5185\t{wd_gender} (gender)\tadd\t{datetime.now().isoformat()}\n")
+
 				elif prop == "P16":
+					plurale_tantum = False
 					for claim in wb_item['claims'][prop]:
 						if claim['mainsnak']['datavalue']['value']['id'] == "Q465":
 							plurale_tantum = True
+					if plurale_tantum:
+						if "P1552" in wd_item['claims']:
+							for claim in wd_item['claims']["P1552"]:
+								if claim['mainsnak']['datavalue']['value']['id'] == "Q138246":
+									print(f'Checked plurale tantum, is ok.')
+									plurale_tantum = False
+					if plurale_tantum:
+						create_claim(subject=wd_id, prop="P1552", value="Q138246", xml_id=xml_id,
+						             source_date=source_date)
+						with open('source/alignment-patrol.csv', 'a') as file:
+							file.write(
+								f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tP1552\tQ138246 (plurale tantum)\tadd\t{datetime.now().isoformat()}\n")
 
-			if wd_gender:
-				gender_items = []
-				if "P5185" in wd_item['claims']:
-					for claim in wd_item['claims']["P5185"]:
-						gender_items.append(claim['mainsnak']['datavalue']['value']['id'])
-					if len(gender_items) > 1:
-						input(f"http://www.wikidata.org/entity/{wd_id} has more than one gender item. Check that. Any key to skip this gender statement.")
-					elif len(gender_items) == 1:
-						if gender_items[0] == wd_gender:
-							print(f"Checked gender, {wd_gender} is ok.")
-						else:
-							correct_claim(guid=wd_item['claims']["P5185"][0]['id'], value=wd_gender, xml_id=xml_id, source_date=source_date)
-							with open('source/alignment-patrol.csv', 'a') as file:
-								file.write(f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tprop\t{wd_gender} (gender)\tupdate\t{datetime.now().isoformat()}\n")
-				else:
-					create_claim(subject=wd_id, prop="P5185", value=wd_gender, xml_id=xml_id, source_date=source_date)
-					with open('source/alignment-patrol.csv', 'a') as file:
-						file.write(f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tP5185\t{wd_gender} (gender)\tadd\t{datetime.now().isoformat()}\n")
-
-			if plurale_tantum:
-				if "P1552" in wd_item['claims']:
-					for claim in wd_item['claims'][prop]:
-						if claim['mainsnak']['datavalue']['value']['id'] == "Q138246":
-							print(f'Checked plurale tantum, is ok.')
-							plurale_tantum = False
-			if plurale_tantum:
-				create_claim(subject=wd_id, prop="P1552", value="Q138246", xml_id=xml_id, source_date=source_date)
-				with open('source/alignment-patrol.csv', 'a') as file:
-					file.write(f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tP1552\tQ138246 (plurale tantum)\tadd\t{datetime.now().isoformat()}\n")
 
 		elif entity_type == "sense": # language style, location of sense use, field of use
+			wb_sense = None
 			wd_sense = None
+
+			# get possible claims on entry level that on Wikidata will belong to sense (all senses in the entry)
+			entry_claims_for_senses = {}
+			for prop in ["P9", "P10", "P11"]:
+				wd_prop = wd_mapping[prop]
+				if prop in wb_item['claims']:
+					if prop not in entry_claims_for_senses:
+						entry_claims_for_senses[prop] = []
+					for claim in wb_item['claims'][prop]:
+						value = claim['mainsnak']['datavalue']['value']['id']
+						entry_claims_for_senses[prop].append(value)
+
 			for sense in wb_item['senses']:
 				if sense['id'] == entity:
 					wb_sense = sense
@@ -250,6 +297,8 @@ for lid in wb_entities.keys():
 					wd_sense = sense
 					if "P14752" not in wd_sense['claims']:
 						input(f"Fatal error: No DLP external id claim in aligned sense.")
+					elif len(wd_sense['claims']['P14752']) > 1:
+						input(f"Fatal error: More than one DLP external id claim in aligned sense.")
 					elif wd_sense['claims']['P14752'][0]['mainsnak']['datavalue']['value'] != xml_id:
 						input(f"Fatal error: XML id in Wikibase and Wikidata do not match.")
 			if not wd_sense:
@@ -270,31 +319,29 @@ for lid in wb_entities.keys():
 							print(f"Will create claim on Wikidata sense.")
 							create_claim(subject=wd_id, prop=wd_prop, value=wd_value, xml_id=xml_id, source_date=source_date)
 							with open('source/alignment-patrol.csv', 'a') as file:
-								file.write(f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\t{wd_prop}\t{wd_value}\tadd\t{datetime.now().isoformat()}\n")
+								file.write(f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\t{wd_prop}\t{wd_value}\tadd from sense\t{datetime.now().isoformat()}\n")
+			for prop in entry_claims_for_senses:
+				for value in entry_claims_for_senses[prop]:
+					wd_value = wd_mapping[value]
+					wd_prop = wd_mapping[prop]
+					if wd_prop in wd_sense['claims']:
+						for wd_claim in wd_sense['claims'][wd_prop]:
+							if wd_claim['mainsnak']['datavalue']['value']['id'] == wd_value:
+								print(f"Checked {wd_prop}, {value}: is ok.")
+								wd_value = None
+					if wd_value:
+						print(f"Will create claim (from entry level) on Wikidata sense.")
+						entry_xml_id = wb_item['claims']['P6'][0]['mainsnak']['datavalue']['value']
+						create_claim(subject=wd_id, prop=wd_prop, value=wd_value, xml_id=entry_xml_id,
+									 source_date=source_date)
+						with open('source/alignment-patrol.csv', 'a') as file:
+							file.write(
+								f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\t{wd_prop}\t{wd_value}\tadd from entry\t{datetime.now().isoformat()}\n")
 
 	# write patrol mark to Wikibase
-
-	timestamp = json.dumps({"entity-type": "time", "time": nowtime, "timezone": 0,
-							  "before": 0, "after": 0, "precision": 11,
-							  "calendarmodel": "http://www.wikidata.org/entity/Q1985727"})
-	claim_id = None
-	while (not claim_id):
-		try:
-			request = wikibase.post('wbcreateclaim', token=wikibase_token, entity=lid, property="P18", snaktype="value",
-								value=timestamp,
-								bot=1, summary=f"wikidata_patrol_entries_senses.py")
-			if request['success'] == 1:
-				done = True
-				claim_id = request['claim']['id']
-				print(f"++ Wikibase: Created claim {lid} - patrol date - {datetime.now().isoformat()}...")
-			time.sleep(.34)
-		except Exception as ex:
-			if 'Invalid CSRF token.' in str(ex):
-				print('Wait a sec. Must get a new CSRF token...')
-				wikibase_token = get_wikibase_token()
-				time.sleep(5)
-			else:
-				print('Claim creation failed, will try again...\n' + str(ex))
-				time.sleep(4)
+	wbi_item = ilwbi.wbi.lexeme.get(entity_id=lid)
+	wbi_item.claims.add(ilwbi.Time(prop_nr="P18", time=nowtime, precision=11), action_if_exists=ilwbi.ActionIfExists.REPLACE_ALL)
+	wbi_item.write()
+	time.sleep(.2)
 	print(f"Finished {lid}.")
 
