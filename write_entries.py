@@ -22,9 +22,10 @@ with open("source/tei_wb_map.csv") as file:
 # iterate through entries
 count = 0
 for entry in entries:
+
     wb_lexeme = None
     count += 1
-    if count < 46733:
+    if len(entry['lemmas']) < 2:
         continue
     print(f"[{count}/{len(entries)}] Now processing {entry['xml_id']}")
     # reference block to be attached to statements
@@ -46,7 +47,7 @@ for entry in entries:
         time.sleep(.1)
 
     # lemmas
-    lemdict = {"pt": None, "pt-br": None, "pt-ao1990": None, "pt-x-Q59342809": None}
+    lemdict = {"pt": None, "pt-br": None, "pt-colb1945": None, "pt-x-Q59342809": None}
 
     for lemtuple in entry['lemmas']:
         lemqualis = []
@@ -59,11 +60,15 @@ for entry in entries:
                     lemdict['pt-br'] = lemma
                 lemqualis.append(ilwbi.Item(prop_nr="P11", value="Q204"))
         elif "ao" in attribs:
-            if not lemdict['pt-ao1990']: # old orthography
-                lemdict['pt-ao1990'] = lemma
+            if not lemdict['pt-colb1945']: # old orthography
+                lemdict['pt-colb1945'] = lemma
             lemqualis.append(ilwbi.Item(prop_nr="P16", value="Q23"))
         elif "fem" in attribs:
             lemqualis.append(ilwbi.String(prop_nr="P20", value=attribs["fem"].strip()))
+            if not lemdict['pt']:
+                lemdict['pt'] = lemma
+            elif not lemdict["pt-x-Q59342809"]:
+                lemdict['pt-x-Q59342809'] = lemma
         elif "foreign" in attribs:
             lemqualis.append(ilwbi.Item(prop_nr="P16", value="Q24"))
             if not lemdict['pt']:
@@ -86,7 +91,9 @@ for entry in entries:
     existing_lemmas = wb_lexeme.lemmas.get_json()
     for lang in existing_lemmas:
         if lang not in lemmajson:
-            lemmajson[lang] = {"language": lang, "value": None, "remove": True}
+            lemmajson[lang] = {"language": lang, "value": "[del]"}
+        elif not lemmajson[lang]:
+            lemmajson[lang]["value"] = "[del]"
 
     wb_lexeme.lemmas.from_json(lemmajson)
 
