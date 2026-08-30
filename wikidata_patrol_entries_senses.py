@@ -70,6 +70,16 @@ def create_claim(subject=None, prop=None, value=None, xml_id=None, source_date=N
 			time.sleep(4)
 	set_wd_ref(guid=claim_id, xml_id=xml_id, source_date=source_date)
 
+def remove_claim(claims=None, value=None):
+	global wikidata_token
+	for claim in claims:
+		if claim['mainsnak']['datavalue']['value']['id'] == value:
+			guid = claim['id']
+			results = wikidata.post('wbremoveclaims', claim=guid, token=wikidata_token)
+			if results['success'] == 1:
+				print(f'Wikidata claim successfully removed: {claim['mainsnak']['property']} - {value}')
+				time.sleep(1)
+
 def set_wd_ref(guid=None, xml_id=None, source_date=None):
 	global wikidata_token
 	refsnaks = json.dumps(
@@ -153,6 +163,8 @@ for lid in wb_entities.keys():
 	source_date = wb_item['claims']['P6'][0]['references'][0]['snaks']['P12'][0]['datavalue']['value']['time']
 	print(
 		f"Got data for https://illlp.wikibase.cloud/wiki/Lexeme:{lid}, with {len(wb_item['senses'])} senses.")
+
+	# go through Wikibase entities
 	for row in wb_entities[lid]:
 		entity = row['entity']['value'].replace("https://illlp.wikibase.cloud/entity/", "")
 		entity_type = row['type']['value']
@@ -191,6 +203,8 @@ for lid in wb_entities.keys():
 					del wb_item['lemmas']['pt-x-Q59342809']
 			lemma_change = []
 			for lang, lemdict in wb_item['lemmas'].items():
+				if lemdict['value'] == "[del]": # lemma deletion problem workaround
+					continue
 				if lang in wd_item['lemmas']:
 					if wd_item['lemmas'][lang]['value'] != lemdict['value']:
 						wd_item['lemmas'][lang]['value'] = lemdict['value']
@@ -220,19 +234,41 @@ for lid in wb_entities.keys():
 			# entry claims
 			for prop in wb_item['claims']:
 				if prop == "P15": # grammatical gender
+					# check if lexeme has forms for two genders
+					twoforms = False
+					for lemclaim in wb_item['claims']['P19']:
+						if "P20" in lemclaim['qualifiers']: # female form
+							twoforms = True
+
+					wd_gender = []
 					gender_items = []
 					for claim in wb_item['claims'][prop]:
 						gender_items.append(claim['mainsnak']['datavalue']['value']['id'])
-					if "Q17" in gender_items and "Q18" in gender_items:
-						wd_gender = "Q18478758" # common of two genders
+					if ("Q17" in gender_items) and ("Q18" in gender_items) and (not twoforms):
+						wd_gender = ["Q18478758"]  # common of two genders
+					elif ("Q17" in gender_items) and ("Q18" in gender_items) and twoforms:
+						wd_gender = ["Q499327", "Q1775415"]  # masc and fem
 					elif "Q17" in gender_items:
-						wd_gender = "Q499327" # masculine
+						wd_gender = ["Q499327"]  # masculine
 					elif "Q18" in gender_items:
-						wd_gender = "Q1775415" # feminine
-					gender_items = []
+						wd_gender = ["Q1775415"]  # feminine
+
+					wd_gender_items = []
 					if "P5185" in wd_item['claims']:
 						for claim in wd_item['claims']["P5185"]:
-							gender_items.append(claim['mainsnak']['datavalue']['value']['id'])
+							wd_gender_items.append(claim['mainsnak']['datavalue']['value']['id'])
+						for gender_to_write in wd_gender:
+							if gender_to_write in wd_gender_items:
+								print(f"Checked gender, {wd_gender} is ok.")
+							else:
+								create_claim(subject=wd_id, prop="P5185", value=gender_to_write, xml_id=xml_id,
+											 source_date=source_date)
+								with open('source/alignment-patrol.csv', 'a') as file:
+									file.write(
+										f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tP5185\t{wd_gender} (gender)\tadd\t{datetime.now().isoformat()}\n")
+						for gender_to_remove in wd_gender_items:
+							if gender_to_remove not in wd_gender:
+								remove_claim(claims=wb_item['claims']['P5185'], value=gender_to_remove)
 						if len(gender_items) > 1:
 							pass
 							# input(f"http://www.wikidata.org/entity/{wd_id} has more than one gender item. Check that. Any key to skip this gender statement.")
@@ -247,11 +283,12 @@ for lid in wb_entities.keys():
 								# 	file.write(
 								# 		f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tprop\t{wd_gender} (gender)\tupdate\t{datetime.now().isoformat()}\n")
 					else:
-						create_claim(subject=wd_id, prop="P5185", value=wd_gender, xml_id=xml_id,
-						             source_date=source_date)
-						with open('source/alignment-patrol.csv', 'a') as file:
-							file.write(
-								f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tP5185\t{wd_gender} (gender)\tadd\t{datetime.now().isoformat()}\n")
+						for gender_to_write in wd_gender:
+							create_claim(subject=wd_id, prop="P5185", value=gender_to_write, xml_id=xml_id,
+										 source_date=source_date)
+							with open('source/alignment-patrol.csv', 'a') as file:
+								file.write(
+									f"{entity}\thttp://www.wikidata.org/entity/{wd_id}\tP5185\t{wd_gender} (gender)\tadd\t{datetime.now().isoformat()}\n")
 
 				elif prop == "P16":
 					plurale_tantum = False

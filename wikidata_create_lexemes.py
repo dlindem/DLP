@@ -152,16 +152,10 @@ for wb_lexeme_id in wb_lexemes:
 	# build new lexeme
 	wd_lexeme = wdwbi.wbi.lexeme.new(language=language, lexical_category=lexical_category)
 
-	# handle duplicate lemma problem (from bug in write_entries.py)
-	if "pt-x-Q59342809" in wb_item['lemmas'] and "pt" in wb_item['lemmas']:
-		if wb_item['lemmas']['pt-x-Q59342809']['value'] == wb_item['lemmas']['pt']['value']:
-			del wb_item['lemmas']['pt-x-Q59342809']
-	if "pt-x-Q59342809" in wb_item['lemmas'] and "pt-ao1990" in wb_item['lemmas']:
-		if wb_item['lemmas']['pt-x-Q59342809']['value'] == wb_item['lemmas']['pt-ao1990']['value']:
-			del wb_item['lemmas']['pt-x-Q59342809']
-
 	# write lemmata
 	for lemlang, lemdict in wb_item['lemmas'].items():
+		if lemdict['value'] == "[del]":
+			continue
 		wd_lexeme.lemmas.set(language=lemlang, value=lemdict['value'])
 		print(f"Set lemma for {lemlang}: '{lemdict['value']}'")
 
@@ -190,19 +184,28 @@ for wb_lexeme_id in wb_lexemes:
 			print(f"Entry level DLP alignment claim set: P14752 > {xml_id}")
 
 		elif prop == "P15":  # grammatical gender
-			wd_gender = None
+			# check if lexeme has forms for two genders
+			twoforms = False
+			for lemclaim in wb_item['claims']['P19']:
+				if "P20" in lemclaim['qualifiers']:
+					twoforms = True
+
+			wd_gender = []
 			gender_items = []
 			for claim in wb_item['claims'][prop]:
 				gender_items.append(claim['mainsnak']['datavalue']['value']['id'])
-			if "Q17" in gender_items and "Q18" in gender_items:
-				wd_gender = "Q18478758"  # common of two genders
+			if ("Q17" in gender_items) and ("Q18" in gender_items) and (not twoforms):
+				wd_gender = ["Q18478758"]  # common of two genders
+			elif ("Q17" in gender_items) and ("Q18" in gender_items) and twoforms:
+				wd_gender = ["Q499327", "Q1775415"] # masc and fem
 			elif "Q17" in gender_items:
-				wd_gender = "Q499327"  # masculine
+				wd_gender = ["Q499327"]  # masculine
 			elif "Q18" in gender_items:
-				wd_gender = "Q1775415"  # feminine
-			wd_lexeme.claims.add(wdwbi.Item(prop_nr="P5185", value=wd_gender, references=references),
+				wd_gender = ["Q1775415"]  # feminine
+			for wd_gen in wd_gender:
+				wd_lexeme.claims.add(wdwbi.Item(prop_nr="P5185", value=wd_gen, references=references),
 								 action_if_exists=ActionIfExists.REPLACE_ALL)
-			print(f"Gender claim added: {wd_gender}")
+				print(f"Gender claim added: {wd_gen}")
 		elif prop == "P16": # plurale tantum
 			for claim in wb_item['claims'][prop]:
 				if claim['mainsnak']['datavalue']['value']['id'] == "Q465":
