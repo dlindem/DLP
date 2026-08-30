@@ -95,9 +95,10 @@ def get_entry_info(entry, status=""):
 			                            'val': usg_codes[usg.attrib['type']][usg.text]['val']})
 			print(f"Added usg of type : {usg.attrib['type']}: {usg.text} > {usg_codes[usg.attrib['type']][usg.text]}")
 
+	entry_object['lemmas'] = []
+	formcount = 0
 	for form in entry.findall('{http://www.tei-c.org/ns/1.0}form'):
-
-		entry_object['lemmas'] = []
+		formcount += 1
 		for orth in form.findall('{http://www.tei-c.org/ns/1.0}orth'):
 			if not orth.text:
 				print("Fatal error: No orth text.")
@@ -127,11 +128,12 @@ def get_entry_info(entry, status=""):
 					lemma_attribs[attrib] = [value]
 				else:
 					lemma_attribs[attrib].append(value)
-
-		if len(entry_object['lemmas']) == 0:
-			print(f"Got no lemma... goes to error report, and is skipped.")
-			error_report += f"{entry_id}\t{status}\tEntry ID with no valid <orth> content\n"
-			return None
+	if formcount > 1:
+		entry_object['multipleteiform'] = True
+	if len(entry_object['lemmas']) == 0:
+		print(f"Got no lemma... goes to error report, and is skipped.")
+		error_report += f"{entry_id}\t{status}\tEntry ID with no valid <orth> content\n"
+		return None
 
 	return entry_object
 
