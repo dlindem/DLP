@@ -1,8 +1,6 @@
 import csv, sys, time, re
 from datetime import datetime
 
-import ilwbi
-
 import wdwbi # Wikidata via WikibaseIntegrator
 import mwclient # Wikibase via mwclient
 from config_private import wb_bot_user, wb_bot_pwd
@@ -42,7 +40,7 @@ def write_mapping(wb_entity, wd_entity, type):
 				done = True
 				claim_id = request['claim']['id']
 				print(f"Wikibase {type} claim created: {wb_entity} - P1 - {wd_entity}...", end=" ")
-			time.sleep(.34)
+			time.sleep(.12)
 		except Exception as ex:
 			if 'Invalid CSRF token.' in str(ex):
 				print('Wait a sec. Must get a new CSRF token...')
@@ -66,7 +64,7 @@ def write_mapping(wb_entity, wd_entity, type):
 									 value=f'"{comment}"', bot=1)
 			if setqualifier['success'] == 1:
 				print('Qualifier set successfully ("' + comment + '").', end= " ")
-				time.sleep(.34)
+				time.sleep(.12)
 				break
 		except Exception as ex:
 			if 'Invalid CSRF token.' in str(ex):
@@ -90,7 +88,7 @@ def write_mapping(wb_entity, wd_entity, type):
 			setref = site.post('wbsetreference', token=token, statement=claim_id, index=0, snaks=refsnaks, bot=1)
 			if setref['success'] == 1:
 				print(f'Time reference {nowtime} successfully set.')
-				time.sleep(.34)
+				time.sleep(.12)
 				return True
 		except Exception as ex:
 			if 'Invalid CSRF token.' in str(ex):
@@ -209,14 +207,14 @@ for wb_lexeme_id in wb_lexemes:
 		elif prop == "P16": # plurale tantum
 			for claim in wb_item['claims'][prop]:
 				if claim['mainsnak']['datavalue']['value']['id'] == "Q465":
-					wd_lexeme.claims.add(wdwbi.Item(prop_nr="P1552", value="Q138246", references=references), action_if_exists=ilwbi.ActionIfExists.REPLACE_ALL)
+					wd_lexeme.claims.add(wdwbi.Item(prop_nr="P1552", value="Q138246", references=references), action_if_exists=wdwbi.ActionIfExists.REPLACE_ALL)
 					print("Plurale tantum characteristic added.")
 		elif prop in ['P9', 'P10', 'P11']: # language style, location of sense use, field of use
 			wd_prop = wd_mapping[prop]
 			# add these entry-level claims to all senses
 			for claim in wb_lexeme_claims[prop]:
 				wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
-				entry_claims_for_senses.append(ilwbi.Item(prop_nr=prop, value=wd_value, references=references))
+				entry_claims_for_senses.append(wdwbi.Item(prop_nr=prop, value=wd_value, references=references))
 
 	# build senses from scratch
 
@@ -243,7 +241,7 @@ for wb_lexeme_id in wb_lexemes:
 										 action_if_exists=ActionIfExists.APPEND_OR_REPLACE)
 					print(f"Claim added to sense: {wd_prop} > {wd_value}")
 		for claim in entry_claims_for_senses:
-			new_sense.claims.add(claim, action_if_exists=ilwbi.ActionIfExists.APPEND_OR_REPLACE)
+			new_sense.claims.add(claim, action_if_exists=wdwbi.ActionIfExists.APPEND_OR_REPLACE)
 			print(f"Claim from entry level added to sense: {claim}")
 		wd_lexeme.senses.add(new_sense)
 
