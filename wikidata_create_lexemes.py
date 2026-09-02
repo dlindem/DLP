@@ -6,7 +6,7 @@ import requests, json
 headers = {"User-Agent": "User:DL2204 python requests"}
 
 
-def switch_to(bot):
+def switch_wbi_to(bot):
 	if bot == "ilwbi":
 		ilwbi.wbi_config['MEDIAWIKI_API_URL'] = 'https://illlp.wikibase.cloud/w/api.php'
 		ilwbi.wbi_config['SPARQL_ENDPOINT_URL'] = 'https://illlp.wikibase.cloud/query/sparql'
@@ -40,10 +40,19 @@ print("Wikidata mapping loaded.")
 
 # get Wikibase lexemes (no acronyms, no redirect entries) without aligned Wikidata lexeme (now set to limit 1)
 # https://tinyurl.com/2cvkjvdd
-url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Fxml_id%20%3Fsource_date%20%20where%0A%0A%7B%20%3Flexeme%20ildp%3AP3%20ilwb%3AQ5%3B%20dct%3Alanguage%20ilwb%3AQ3%3B%20ilp%3AP6%20%5Bilps%3AP6%20%3Fxml_id%3B%20prov%3AwasDerivedFrom%20%5Bilpr%3AP12%20%3Fsource_date%5D%5D.%0A%20filter%20not%20exists%20%7B%3Flexeme%20ildp%3AP1%20%3Fwd_lexeme.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ19.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ22.%7D%0A%0A%7D%20limit%204%0A"
-wb_r = requests.get(headers=headers, url=url)
-print(wb_r)
-result = wb_r.json()['results']['bindings']
+# url = "https://illlp.wikibase.cloud/query/sparql?format=json&query=PREFIX%20ilwb%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fentity%2F%3E%0APREFIX%20ildp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fdirect%2F%3E%0APREFIX%20ilp%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2F%3E%0APREFIX%20ilps%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fstatement%2F%3E%0APREFIX%20ilpq%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fqualifier%2F%3E%0APREFIX%20ilpr%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Freference%2F%3E%0APREFIX%20ilno%3A%20%3Chttps%3A%2F%2Filllp.wikibase.cloud%2Fprop%2Fnovalue%2F%3E%0A%0Aselect%20%3Flexeme%20%3Fxml_id%20%3Fsource_date%20%20where%0A%0A%7B%20%3Flexeme%20ildp%3AP3%20ilwb%3AQ5%3B%20dct%3Alanguage%20ilwb%3AQ3%3B%20ilp%3AP6%20%5Bilps%3AP6%20%3Fxml_id%3B%20prov%3AwasDerivedFrom%20%5Bilpr%3AP12%20%3Fsource_date%5D%5D.%0A%20filter%20not%20exists%20%7B%3Flexeme%20ildp%3AP1%20%3Fwd_lexeme.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ19.%7D%20filter%20not%20exists%7B%3Flexeme%20ildp%3AP16%20ilwb%3AQ22.%7D%0A%0A%7D%20"
+# wb_r = requests.get(headers=headers, url=url)
+# print(wb_r)
+# result = wb_r.json()['results']['bindings']
+
+query = ilwbi.sparql_prefixes + """
+select ?lexeme ?xml_id ?source_date  where
+
+{ ?lexeme ildp:P3 ilwb:Q5; dct:language ilwb:Q3; ilp:P6 [ilps:P6 ?xml_id; prov:wasDerivedFrom [ilpr:P12 ?source_date]].
+ filter not exists {?lexeme ildp:P1 ?wd_lexeme.} filter not exists{?lexeme ildp:P16 ilwb:Q19.} filter not exists{?lexeme ildp:P16 ilwb:Q22.} filter not exists{?lexeme ildp:P16 ilwb:Q22.}
+
+} limit 20000"""
+result = ilwbi.wbi_helpers.execute_sparql_query(query, user_agent="User:DavidL python requests", endpoint="https://illlp.wikibase.cloud/query/sparql")['results']['bindings']
 wb_lexemes = {}
 for row in result:
 	wb_lexemes[row['lexeme']['value'].replace("https://illlp.wikibase.cloud/entity/", "")] = row
@@ -56,18 +65,17 @@ for wb_lexeme_id in wb_lexemes:
 	print(f"\n[{count}/{len(wb_lexemes)}] now processing https://illlp.wikibase.cloud/entity/{wb_lexeme_id}.")
 	wb_lexeme_source_date = wb_lexemes[wb_lexeme_id]['source_date']['value']
 	xml_id = wb_lexemes[wb_lexeme_id]['xml_id']['value']
-	# wb_item_r = requests.get(headers=headers,
-	# 						 url=f"https://illlp.wikibase.cloud/wiki/Special:EntityData/{wb_lexeme_id}.json")
-	# wb_item = wb_item_r.json()['entities'][wb_lexeme_id]
+
 	switch_to("ilwbi")
 	wb_lexeme = ilwbi.wbi.lexeme.get(entity_id=wb_lexeme_id)
 	wb_item = wb_lexeme.get_json()
 	print(f"Got data for https://illlp.wikibase.cloud/wiki/Lexeme:{wb_lexeme_id}, with {len(wb_item['senses'])} senses.")
 	language = wd_mapping[wb_item['language']]
 	lexical_category = wd_mapping[wb_item['lexicalCategory']]
-
+	if "P19" not in wb_item['claims']:
+		continue
 	# build new lexeme
-	switch_to("wdwbi")
+	switch_wbi_to("wdwbi")
 	wd_lexeme = wdwbi.wbi.lexeme.new(language=language, lexical_category=lexical_category)
 
 	# write lemmata
@@ -123,7 +131,7 @@ for wb_lexeme_id in wb_lexemes:
 				wd_genders = ["Q1775415"]  # feminine
 			for wd_gender in wd_genders:
 				wd_lexeme.claims.add(wdwbi.Item(prop_nr="P5185", value=wd_gender, references=references),
-								 action_if_exists=wdwbi.ActionIfExists.REPLACE_ALL)
+								 action_if_exists=wdwbi.ActionIfExists.APPEND_OR_REPLACE)
 				print(f"Gender claim added: {wd_gender}. Twoforms = {twoforms}")
 		elif prop == "P16": # plurale tantum
 			for claim in wb_item['claims'][prop]:
@@ -134,7 +142,10 @@ for wb_lexeme_id in wb_lexemes:
 			wd_prop = wd_mapping[prop]
 			# add these entry-level claims to all senses
 			for claim in wb_lexeme_claims[prop]:
-				wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
+				claim_value = claim['mainsnak']['datavalue']['value']['id']
+				if claim_value not in wd_mapping:
+					continue
+				wd_value = wd_mapping[claim_value]
 				entry_claims_for_senses.append(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references))
 
 	# build senses from scratch
@@ -157,7 +168,10 @@ for wb_lexeme_id in wb_lexemes:
 			if prop in ["P9", "P10", "P11"]: # language style, location of sense use, field of use
 				wd_prop = wd_mapping[prop]
 				for claim in sense['claims'][prop]:
-					wd_value = wd_mapping[claim['mainsnak']['datavalue']['value']['id']]
+					claim_value = claim['mainsnak']['datavalue']['value']['id']
+					if claim_value not in wd_mapping:
+						continue
+					wd_value = wd_mapping[claim_value]
 					new_sense.claims.add(wdwbi.Item(prop_nr=wd_prop, value=wd_value, references=references),
 										 action_if_exists=wdwbi.ActionIfExists.APPEND_OR_REPLACE)
 					print(f"Claim added to sense: {wd_prop} > {wd_value}")
@@ -166,7 +180,8 @@ for wb_lexeme_id in wb_lexemes:
 			print(f"Claim from entry level added to sense: {claim}")
 		wd_lexeme.senses.add(new_sense)
 
-	wd_lexeme.write()
+	switch_wbi_to("wdwbi")
+	wd_lexeme.write(summary="Created new lexeme from Dicionário da Língua Portuguesa")
 	print(f"Successfully written to https://www.wikidata.org/wiki/Lexeme:{wd_lexeme.id}")
 
 	# write entry mapping to Wikibase
@@ -189,8 +204,8 @@ for wb_lexeme_id in wb_lexemes:
 					wb_sense_id = wb_sense['id']
 					qualifiers = [ilwbi.String(prop_nr="P14", value="added to new Wikidata lexeme")]
 					wb_lexeme.senses.get(id=wb_sense_id).claims.add(ilwbi.ExternalID(prop_nr="P1", value=wd_sense_id, qualifiers=qualifiers, references=references), action_if_exists=ilwbi.ActionIfExists.REPLACE_ALL)
-	switch_to("ilwbi")
-	wb_lexeme.write()
+	switch_wbi_to("ilwbi")
+	wb_lexeme.write(summary="Add Wikidata mappings and Wikidata edit dates")
 	print(f"Success writing new mappings to https://illlp.wikibase.cloud/entity/{wb_lexeme.id}")
 	time.sleep(.12)
 
